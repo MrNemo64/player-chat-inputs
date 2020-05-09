@@ -4,7 +4,7 @@ Utilities to get a player input for those who don't want to use the Conversation
 ## Usage
 In this example I'll be using a command
 
-```
+```java
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
