@@ -50,6 +50,10 @@ public class TestCommand implements CommandExecutor {
 			return Integer.valueOf(str);
 		});
 
+  		builder.onInvalidInput((p, str) -> {
+			p.sendMessage("That is not a number"); // Send a message if the input is invalid
+			return true; // Send the messages stablished with invalidInputMessage(String) and sendValueMessage(String)
+		});
   
 		builder.onFinish((p, value) -> {
 		    // when the player inputs a string that is a number greater that 0 we send a message
