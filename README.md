@@ -26,8 +26,8 @@ public class TestCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
 		if (!(sender instanceof Player)) { // PlayerChatInput only works with players
-			sender.sendMessage("Only for players");
-			return false;
+     	       sender.sendMessage("Only for players");
+     	       return false;
 		}
 
 		Player player = (Player) sender;
@@ -52,12 +52,12 @@ public class TestCommand implements CommandExecutor {
 
   
 		builder.onFinish((p, value) -> {
-	    // when the player inputs a string that is a number greater that 0 we send a message
-      p.sendMessage(value + "! is " + factorialOf(value));
+		    // when the player inputs a string that is a number greater that 0 we send a message
+		    p.sendMessage(value + "! is " + factorialOf(value));
 		});
 
 		builder.onCancel((p) -> {
-      // if the player cancels, we send a message
+			// if the player cancels, we send a message
 			p.sendMessage("Canceled the factorial-calculation");
 		});
 
@@ -66,7 +66,7 @@ public class TestCommand implements CommandExecutor {
 		builder.toCancel("cancel"); // Message that the player must send to cancel
 
 		PlayerChatInput<Integer> in = builder.build(); // Build the PlayerChatInput
-
+	
 		in.start(); // Ask for the number
 
 		return false;
