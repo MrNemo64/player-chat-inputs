@@ -61,7 +61,7 @@ public class TestCommand implements CommandExecutor {
 			p.sendMessage("Canceled the factorial-calculation");
 		});
 
-		builder.invalidInputMessage("That is not a number/Can calculate the factorial of it");// Message if the input is // inalid
+		builder.invalidInputMessage("That is not a number/Can calculate the factorial of it");// Message if the input is invalid
 		builder.sendValueMessage("Send a number to calculate"); // Asking for the number
 		builder.toCancel("cancel"); // Message that the player must send to cancel
 
