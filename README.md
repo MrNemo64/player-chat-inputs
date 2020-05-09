@@ -1,5 +1,5 @@
 # player-inputs
-Utilities to get a player input
+Utilities to get a player input for those who don't want to use the Conversation API
 
 ##Usage
 In this example I'll be using a command
