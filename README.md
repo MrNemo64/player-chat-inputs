@@ -2,6 +2,7 @@
 Utilities to get a player input for those who don't want to use the Conversation API
 
 ## Usage
+Explanation: https://www.spigotmc.org/threads/player-chat-inputs.437565/
 In this example I'll be using a command
 
 ```java
