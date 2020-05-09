@@ -338,6 +338,15 @@ public class PlayerChatInput<T> implements Listener {
 			this.cancel = cancel;
 			return this;
 		}
+		
+		/**
+		 * Sets the default value
+		 * @param def The default value
+		 */
+		public PlayerChatInputBuilder<U> defaultValue(@Nullable U def) {
+			this.value = def;
+			return this;
+		}
 
 		/**
 		 * Creates the {@link PlayerChatInput}
