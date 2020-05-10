@@ -1,0 +1,9 @@
+## 1.1
+ - Added a new method to the builder: repeat(boolean)
+		 If true and the player sends an invalid input,
+		 PlayerChatInputBuilder#onInvalidInput(BiFunction)
+     will run and another inputs will be asked.
+		 If false and the player sends an invalid input,
+		 PlayerChatInputBuilder#onInvalidInput(BiFunction)
+     will run and no more inputs will be expected.
+     By default is set to true
