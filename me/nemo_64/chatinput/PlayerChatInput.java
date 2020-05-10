@@ -46,7 +46,7 @@ import org.bukkit.plugin.Plugin;
  * 
  * @author Nemo_64
  * @version 1.1
- * @param <T> 
+ * @param <T>
  *            The input type. Ex: String, Integer, Boolean
  */
 public class PlayerChatInput<T> implements Listener {
