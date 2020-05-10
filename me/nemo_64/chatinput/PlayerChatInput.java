@@ -45,7 +45,7 @@ import org.bukkit.plugin.Plugin;
  * {@link org.bukkit.conversations.Conversation Conversation} api
  * 
  * @author Nemo_64
- * @version 1.0
+ * @version 1.1
  * @param <T>
  *            The input type. Ex: String, Integer, Boolean
  */
@@ -63,6 +63,8 @@ public class PlayerChatInput<T> implements Listener {
 	private String cancel;
 
 	private Plugin main;
+
+	private boolean repeat;
 
 	private T value;
 
@@ -96,7 +98,7 @@ public class PlayerChatInput<T> implements Listener {
 			@Nullable String invalidInputMessgae, @Nullable String sendValueMessage,
 			@Nonnull BiFunction<Player, String, Boolean> isValidInput, @Nonnull BiFunction<Player, String, T> setValue,
 			@Nonnull BiConsumer<Player, T> onFinish, @Nonnull Consumer<Player> onCancel, @Nonnull String cancel,
-			@Nonnull BiFunction<Player, String, Boolean> onInvalidInput) {
+			@Nonnull BiFunction<Player, String, Boolean> onInvalidInput, boolean repeat) {
 		Objects.requireNonNull(plugin, "main can't be null");
 		Objects.requireNonNull(player, "player can't be null");
 		Objects.requireNonNull(invalidInputMessgae, "isValidInput can't be null");
@@ -118,6 +120,7 @@ public class PlayerChatInput<T> implements Listener {
 		this.cancel = cancel == null ? "cancel" : cancel;
 		this.onInvalidInput = onInvalidInput;
 		this.value = startOn;
+		this.repeat = repeat;
 	}
 
 	@EventHandler
@@ -130,24 +133,29 @@ public class PlayerChatInput<T> implements Listener {
 			unregister();
 			return;
 		}
-		if (!isValidInput.apply(player, e.getMessage())) {
+		if (isValidInput.apply(player, e.getMessage())) {
+			value = setValue.apply(player, e.getMessage());
+			onFinish.accept(player, value);
+			unregister();
+		} else {
 			if (onInvalidInput.apply(player, e.getMessage())) {
 				if (invalidInputMessgae != null)
 					player.sendMessage(invalidInputMessgae);
-				if (sendValueMessage != null)
+				if (sendValueMessage != null && repeat)
 					player.sendMessage(sendValueMessage);
 			}
+			if (!repeat)
+				unregister();
 			return;
 		}
-		value = setValue.apply(player, e.getMessage());
-		onFinish.accept(player, value);
-		unregister();
 	}
 
 	@EventHandler
 	public void onPlayerDisconnect(PlayerQuitEvent e) {
-		if (e.getPlayer().getUniqueId().equals(player.getUniqueId()))
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			onCancel.accept(player);
 			unregister();
+		}
 	}
 
 	@Nullable
@@ -202,6 +210,8 @@ public class PlayerChatInput<T> implements Listener {
 
 		private U value;
 
+		private boolean repeat;
+
 		private Plugin main;
 
 		/**
@@ -229,14 +239,16 @@ public class PlayerChatInput<T> implements Listener {
 			};
 			onFinish = (p, val) -> {};
 			onCancel = (p) -> {};
+
+			repeat = true;
 		}
 
 		/**
 		 * Sets the code that will be ejecuted if the player send an invalid input
 		 * 
 		 * @param onInvalidInput
-		 *            A {@link java.util.function.BiFunction BiFunction} with the code to be
-		 *            ejecuted <br>
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted <br>
 		 *            If this returns true, the message setted with the
 		 *            {@link #invalidInputMessage(String)} will be sent to the player
 		 * 
@@ -250,8 +262,8 @@ public class PlayerChatInput<T> implements Listener {
 		 * Checks if the given input is valid
 		 * 
 		 * @param isValidInput
-		 *            A {@link java.util.function.BiFunction BiFunction} with the code to be
-		 *            ejecuted <br>
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted <br>
 		 *            This code must check if the value that the player has inputted is
 		 *            vaid. For example<br>
 		 *            {@code try { Integer.valueOf(str); return true; } catch (Exception
@@ -270,8 +282,8 @@ public class PlayerChatInput<T> implements Listener {
 		 * the code to do the cast
 		 * 
 		 * @param setValue
-		 *            A {@link java.util.function.BiFunction BiFunction} with the code to be
-		 *            ejecuted to cast the string input to the correct type
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted to cast the string input to the correct type
 		 */
 		public PlayerChatInputBuilder<U> setValue(@Nonnull BiFunction<Player, String, U> setValue) {
 			this.setValue = setValue;
@@ -283,8 +295,8 @@ public class PlayerChatInput<T> implements Listener {
 		 * succesfull
 		 * 
 		 * @param onFinish
-		 *            A {@link java.util.function.BiFunction BiFunction} with the code to be
-		 *            ejecuted when the player inputs a valid string
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted when the player inputs a valid string
 		 */
 		public PlayerChatInputBuilder<U> onFinish(@Nonnull BiConsumer<Player, U> onFinish) {
 			this.onFinish = onFinish;
@@ -297,8 +309,8 @@ public class PlayerChatInput<T> implements Listener {
 		 * with the {@toCancel(String)} method
 		 * 
 		 * @param onCancel
-		 *            A {@link java.util.function.BiFunction BiFunction} with the code to be
-		 *            ejecuted when the player cancells the input operation
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted when the player cancells the input operation
 		 */
 		public PlayerChatInputBuilder<U> onCancel(@Nonnull Consumer<Player> onCancel) {
 			this.onCancel = onCancel;
@@ -338,13 +350,28 @@ public class PlayerChatInput<T> implements Listener {
 			this.cancel = cancel;
 			return this;
 		}
-		
+
 		/**
 		 * Sets the default value
-		 * @param def The default value
+		 * 
+		 * @param def
+		 *            The default value
 		 */
 		public PlayerChatInputBuilder<U> defaultValue(@Nullable U def) {
 			this.value = def;
+			return this;
+		}
+
+		/**
+		 * If true and the player sends an invalid input,
+		 * {@link #onInvalidInput(BiFunction)} will run and another inputs will be
+		 * asked.<br>
+		 * If false and the player sends an invalid input,
+		 * {@link #onInvalidInput(BiFunction)} will run and no more inputs will be
+		 * expected.
+		 */
+		public PlayerChatInputBuilder<U> repeat(boolean repeat) {
+			this.repeat = repeat;
 			return this;
 		}
 
@@ -355,7 +382,7 @@ public class PlayerChatInput<T> implements Listener {
 		 */
 		public PlayerChatInput<U> build() {
 			return new PlayerChatInput<U>(main, player, value, invalidInputMessage, sendValueMessage, isValidInput,
-					setValue, onFinish, onCancel, cancel, onInvalidInput);
+					setValue, onFinish, onCancel, cancel, onInvalidInput, repeat);
 		}
 	}
 
