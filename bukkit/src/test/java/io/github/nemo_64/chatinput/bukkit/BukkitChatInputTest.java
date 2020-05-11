@@ -32,7 +32,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitTask;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -52,18 +51,6 @@ class BukkitChatInputTest {
         .build();
 
     private final BukkitTask bukkitTask = Mockito.mock(BukkitTask.class);
-
-    @BeforeAll
-    static void registerEvent() {
-        Mockito.when(BukkitChatInputTest.PLUGIN.getServer())
-            .thenReturn(BukkitChatInputTest.SERVER);
-        Mockito.when(BukkitChatInputTest.SERVER.getPluginManager())
-            .thenReturn(BukkitChatInputTest.PLUGIN_MANAGER);
-        Mockito.doNothing()
-            .when(BukkitChatInputTest.PLUGIN_MANAGER)
-            .registerEvents(BukkitChatInputTest.CHAT_INPUT, BukkitChatInputTest.PLUGIN);
-        BukkitChatInputTest.CHAT_INPUT.start();
-    }
 
     @Test
     void createTask() {
