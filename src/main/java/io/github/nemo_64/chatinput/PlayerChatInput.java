@@ -262,7 +262,7 @@ public class PlayerChatInput<T> implements Listener {
          * @param isValidInput A {@link java.util.function.BiFunction BiFunction} with the code
          * to be ejected <br>
          * This code must check if the value that the player has inputted is
-         * vaid. For example<br>
+         * valid. For example<br>
          * <pre>
          *      try {
          *          Integer.valueOf(str); return true;
