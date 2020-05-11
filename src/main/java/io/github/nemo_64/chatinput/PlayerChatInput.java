@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import org.bukkit.Bukkit;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,6 +38,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,6 +68,9 @@ public final class PlayerChatInput<T> implements Listener {
     private final Consumer<Player> onCancel;
 
     @NotNull
+    private final Consumer<Player> onExpire;
+
+    @NotNull
     private final Player player;
 
     @Nullable
@@ -83,6 +88,9 @@ public final class PlayerChatInput<T> implements Listener {
     private final boolean repeat;
 
     private final long expire;
+
+    @Nullable
+    private BukkitTask expireTask;
 
     @Nullable
     private T value;
@@ -109,13 +117,14 @@ public final class PlayerChatInput<T> implements Listener {
                            @NotNull final BiConsumer<Player, T> onFinish, @NotNull final Consumer<Player> onCancel,
                            @NotNull final String cancel,
                            @NotNull final BiFunction<Player, String, Boolean> onInvalidInput, final boolean repeat,
-                           final long expire) {
+                           @NotNull final Consumer<Player> onExpire, final long expire) {
         Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(player, "player can't be null");
         Objects.requireNonNull(isValidInput, "isValidInput can't be null");
         Objects.requireNonNull(setValue, "setValue can't be null");
         Objects.requireNonNull(onFinish, "onFinish can't be null");
-        Objects.requireNonNull(onFinish, "onCancel can't be null");
+        Objects.requireNonNull(onCancel, "onCancel can't be null");
+        Objects.requireNonNull(onCancel, "onExpire can't be null");
         Objects.requireNonNull(onInvalidInput, "onInvalidInput can't be null");
         Objects.requireNonNull(cancel, "cancel can't be null");
         this.plugin = plugin;
@@ -126,6 +135,7 @@ public final class PlayerChatInput<T> implements Listener {
         this.setValue = setValue;
         this.onFinish = onFinish;
         this.onCancel = onCancel;
+        this.onExpire = onExpire;
         if (cancel.trim().isEmpty()) {
             this.cancel = "cancel";
         } else {
@@ -191,6 +201,13 @@ public final class PlayerChatInput<T> implements Listener {
     @SuppressWarnings("unused")
     public void start() {
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
+        if (this.expire != -1L) {
+            this.expireTask = Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
+                if (this.getExpireTask().isPresent()) {
+                    this.onExpire.accept(this.player);
+                }
+            }, this.expire);
+        }
         this.getSendValueMessage()
             .ifPresent(this.player::sendMessage);
     }
@@ -213,6 +230,12 @@ public final class PlayerChatInput<T> implements Listener {
      */
     public void unregister() {
         HandlerList.unregisterAll(this);
+        this.getExpireTask().ifPresent(BukkitTask::cancel);
+    }
+
+    @NotNull
+    private Optional<BukkitTask> getExpireTask() {
+        return Optional.ofNullable(this.expireTask);
     }
 
     /**
@@ -246,6 +269,10 @@ public final class PlayerChatInput<T> implements Listener {
         private Consumer<Player> onCancel = p -> {
         };
 
+        @NotNull
+        private Consumer<Player> onExpire = p -> {
+        };
+
         @Nullable
         private String invalidInputMessage = "That is not a valid input";
 
@@ -275,6 +302,13 @@ public final class PlayerChatInput<T> implements Listener {
         @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> expire(final long expire) {
             this.expire = expire;
+            return this;
+        }
+
+        @NotNull
+        @SuppressWarnings("unused")
+        public PlayerChatInput.PlayerChatInputBuilder<U> onExpire(@NotNull final Consumer<Player> onExpire) {
+            this.onExpire = onExpire;
             return this;
         }
 
@@ -450,7 +484,7 @@ public final class PlayerChatInput<T> implements Listener {
         public PlayerChatInput<U> build() {
             return new PlayerChatInput<>(this.main, this.player, this.value, this.invalidInputMessage,
                 this.sendValueMessage, this.isValidInput, this.setValue, this.onFinish, this.onCancel, this.cancel,
-                this.onInvalidInput, this.repeat, this.expire);
+                this.onInvalidInput, this.repeat, this.onExpire, this.expire);
         }
 
     }
