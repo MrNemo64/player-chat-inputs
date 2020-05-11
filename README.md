@@ -61,7 +61,7 @@ public final class TestCommand implements CommandExecutor {
                 // if the input time expires.
                 player.sendMessage("Input expired!");
             })
-            .expire(20 * 30)
+            .expire(20L * 30L)
             .invalidInputMessage("That is not a number/Can calculate the factorial of it");// Message if the input is invalid
             .sendValueMessage("Send a number to calculate"); // Asking for the number
             .toCancel("cancel"); // Message that the player must send to cancel
