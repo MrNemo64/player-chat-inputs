@@ -245,7 +245,7 @@ public class PlayerChatInput<T> implements Listener {
          *
          * @param onInvalidInput A {@link BiFunction} with the code
          * to be ejected <br>
-         * If this returns true, the message setted with the
+         * If this returns true, the message set with the
          * {@link #invalidInputMessage(String)} will be sent to the player
          * @return the builder.
          */
