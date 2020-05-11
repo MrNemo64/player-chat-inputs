@@ -205,7 +205,10 @@ public final class PlayerChatInput<T> implements Listener {
             this.expireTask = Bukkit.getScheduler().runTaskLater(this.plugin, () ->
                 this.getExpireTask()
                     .filter(task -> !task.isCancelled())
-                    .ifPresent(task -> this.onExpire.accept(this.player)), this.expire);
+                    .ifPresent(task -> {
+                        this.onExpire.accept(this.player);
+                        this.unregister();
+                    }), this.expire);
         }
         this.getSendValueMessage()
             .ifPresent(this.player::sendMessage);
