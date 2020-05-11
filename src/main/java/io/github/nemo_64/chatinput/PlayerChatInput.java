@@ -82,6 +82,8 @@ public final class PlayerChatInput<T> implements Listener {
 
     private final boolean repeat;
 
+    private final long expire;
+
     @Nullable
     private T value;
 
@@ -106,7 +108,8 @@ public final class PlayerChatInput<T> implements Listener {
                            @NotNull final BiFunction<Player, String, T> setValue,
                            @NotNull final BiConsumer<Player, T> onFinish, @NotNull final Consumer<Player> onCancel,
                            @NotNull final String cancel,
-                           @NotNull final BiFunction<Player, String, Boolean> onInvalidInput, final boolean repeat) {
+                           @NotNull final BiFunction<Player, String, Boolean> onInvalidInput, final boolean repeat,
+                           final long expire) {
         Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(player, "player can't be null");
         Objects.requireNonNull(isValidInput, "isValidInput can't be null");
@@ -131,6 +134,7 @@ public final class PlayerChatInput<T> implements Listener {
         this.onInvalidInput = onInvalidInput;
         this.value = startOn;
         this.repeat = repeat;
+        this.expire = expire;
     }
 
     @EventHandler
@@ -248,7 +252,7 @@ public final class PlayerChatInput<T> implements Listener {
         @Nullable
         private String sendValueMessage = "Send in the chat the value";
 
-        private final int expire = -1;
+        private long expire = -1L;
 
         @NotNull
         private String cancel = "cancel";
@@ -265,6 +269,13 @@ public final class PlayerChatInput<T> implements Listener {
         public PlayerChatInputBuilder(@NotNull final Plugin main, @NotNull final Player player) {
             this.main = main;
             this.player = player;
+        }
+
+        @NotNull
+        @SuppressWarnings("unused")
+        public PlayerChatInput.PlayerChatInputBuilder<U> expire(final long expire) {
+            this.expire = expire;
+            return this;
         }
 
         /**
@@ -439,7 +450,7 @@ public final class PlayerChatInput<T> implements Listener {
         public PlayerChatInput<U> build() {
             return new PlayerChatInput<>(this.main, this.player, this.value, this.invalidInputMessage,
                 this.sendValueMessage, this.isValidInput, this.setValue, this.onFinish, this.onCancel, this.cancel,
-                this.onInvalidInput, this.repeat);
+                this.onInvalidInput, this.repeat, this.expire);
         }
 
     }
