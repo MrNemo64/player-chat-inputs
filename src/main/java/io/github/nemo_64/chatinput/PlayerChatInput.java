@@ -49,35 +49,46 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PlayerChatInput<T> implements Listener {
 
+    @NotNull
     private final BiFunction<Player, String, Boolean> onInvalidInput;
 
+    @NotNull
     private final BiFunction<Player, String, Boolean> isValidInput;
 
+    @NotNull
     private final BiFunction<Player, String, T> setValue;
 
+    @NotNull
     private final BiConsumer<Player, T> onFinish;
 
+    @NotNull
     private final Consumer<Player> onCancel;
 
+    @NotNull
     private final Player player;
 
+    @NotNull
     private final String invalidInputMessgae;
 
+    @NotNull
     private final String sendValueMessage;
 
+    @NotNull
     private final String cancel;
 
+    @NotNull
     private final Plugin main;
 
     private final boolean repeat;
 
+    @Nullable
     private T value;
 
     /**
      * @param plugin The main class of the plugin
      * @param player The player that is going to input the value
      * @param startOn The start value
-     * @param invalidInputMessgae Message that will be sent to the player if the input is invalid
+     * @param invalidInputMessage Message that will be sent to the player if the input is invalid
      * @param sendValueMessage Message that will be sent to the player to ask for the input
      * @param isValidInput Checks if the player input is valid
      * @param setValue Used to set the value.<br>
@@ -88,15 +99,15 @@ public class PlayerChatInput<T> implements Listener {
      * @param cancel The string that the player has to send to cancel the process
      * @param onInvalidInput Called when the input is invalid
      */
-    public PlayerChatInput(@NotNull Plugin plugin, @NotNull Player player, @Nullable T startOn,
-                           @Nullable String invalidInputMessgae, @Nullable String sendValueMessage,
+    public PlayerChatInput(@NotNull Plugin plugin, @NotNull Player player, @NotNull T startOn,
+                           @NotNull String invalidInputMessage, @NotNull String sendValueMessage,
                            @NotNull BiFunction<Player, String, Boolean> isValidInput,
                            @NotNull BiFunction<Player, String, T> setValue, @NotNull BiConsumer<Player, T> onFinish,
                            @NotNull Consumer<Player> onCancel, @NotNull String cancel,
                            @NotNull BiFunction<Player, String, Boolean> onInvalidInput, boolean repeat) {
         Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(player, "player can't be null");
-        Objects.requireNonNull(invalidInputMessgae, "isValidInput can't be null");
+        Objects.requireNonNull(invalidInputMessage, "isValidInput can't be null");
         Objects.requireNonNull(sendValueMessage, "isValidInput can't be null");
         Objects.requireNonNull(isValidInput, "isValidInput can't be null");
         Objects.requireNonNull(setValue, "setValue can't be null");
@@ -106,7 +117,7 @@ public class PlayerChatInput<T> implements Listener {
         Objects.requireNonNull(cancel, "cancel can't be null");
         this.main = plugin;
         this.player = player;
-        this.invalidInputMessgae = invalidInputMessgae;
+        this.invalidInputMessgae = invalidInputMessage;
         this.sendValueMessage = sendValueMessage;
         this.isValidInput = isValidInput;
         this.setValue = setValue;
