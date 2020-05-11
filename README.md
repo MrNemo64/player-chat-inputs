@@ -28,10 +28,9 @@ public final class TestCommand implements CommandExecutor {
                sender.sendMessage("Only for players");
                return false;
         }
-        final Player player = (Player) sender;
         // This comand will ask for a number n and will send to the player n! so we will
         // work with integers
-        final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.builder(ciPlugin, player)
+        final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.builder(plugin, (Player) sender)
             .isValidInput((player, input) -> { // Set the validation
                 try {
                     int val = Integer.valueOf(input);
