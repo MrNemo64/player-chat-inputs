@@ -123,7 +123,7 @@ public final class PlayerChatInput<T> implements Listener {
         Objects.requireNonNull(setValue, "setValue can't be null");
         Objects.requireNonNull(onFinish, "onFinish can't be null");
         Objects.requireNonNull(onCancel, "onCancel can't be null");
-        Objects.requireNonNull(onCancel, "onExpire can't be null");
+        Objects.requireNonNull(onExpire, "onExpire can't be null");
         Objects.requireNonNull(onInvalidInput, "onInvalidInput can't be null");
         Objects.requireNonNull(cancel, "cancel can't be null");
         this.plugin = plugin;
