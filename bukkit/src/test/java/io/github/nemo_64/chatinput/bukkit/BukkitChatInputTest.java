@@ -24,26 +24,58 @@
 
 package io.github.nemo_64.chatinput.bukkit;
 
+import io.github.nemo_64.chatinput.Task;
+import java.util.UUID;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitTask;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class BukkitChatInputTest {
 
-    private final Plugin plugin = Mockito.mock(Plugin.class);
+    public static final UUID PLAYER_UUID = UUID.randomUUID();
 
-    private final Player player = Mockito.mock(Player.class);
+    private static final Plugin PLUGIN = Mockito.mock(Plugin.class);
 
-    private final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.builder(this.plugin, this.player)
+    private static final Server SERVER = Mockito.mock(Server.class);
+
+    private static final PluginManager PLUGIN_MANAGER = Mockito.mock(PluginManager.class);
+
+    private static final Player PLAYER = Mockito.mock(Player.class);
+
+    private static final BukkitChatInput<Integer> CHAT_INPUT = BukkitChatInputBuilder.<Integer>builder(BukkitChatInputTest.PLUGIN, BukkitChatInputTest.PLAYER)
         .build();
+
+    private final BukkitTask bukkitTask = Mockito.mock(BukkitTask.class);
+
+    @BeforeAll
+    static void registerEvent() {
+        Mockito.when(BukkitChatInputTest.PLUGIN.getServer())
+            .thenReturn(BukkitChatInputTest.SERVER);
+        Mockito.when(BukkitChatInputTest.SERVER.getPluginManager())
+            .thenReturn(BukkitChatInputTest.PLUGIN_MANAGER);
+        Mockito.doNothing()
+            .when(BukkitChatInputTest.PLUGIN_MANAGER)
+            .registerEvents(BukkitChatInputTest.CHAT_INPUT, BukkitChatInputTest.PLUGIN);
+        BukkitChatInputTest.CHAT_INPUT.start();
+    }
 
     @Test
     void createTask() {
+        final Task<BukkitTask> task = BukkitChatInputTest.CHAT_INPUT.createTask(this.bukkitTask);
     }
 
     @Test
     void whenQuit() {
+        Mockito.when(BukkitChatInputTest.PLAYER.getUniqueId())
+            .thenReturn(BukkitChatInputTest.PLAYER_UUID);
+        final PlayerQuitEvent event = new PlayerQuitEvent(BukkitChatInputTest.PLAYER, "Quit Message");
+        BukkitChatInputTest.CHAT_INPUT.whenQuit(event);
     }
 
     @Test

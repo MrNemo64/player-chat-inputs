@@ -75,7 +75,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
     protected final String cancel;
 
     @NotNull
-    protected final ChatInputPlugin<X, L> ciPlugin;
+    protected final ChatInputPlugin<X, L> plugin;
 
     protected final boolean repeat;
 
@@ -120,7 +120,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
         Objects.requireNonNull(onExpire, "onExpire can't be null");
         Objects.requireNonNull(onInvalidInput, "onInvalidInput can't be null");
         Objects.requireNonNull(cancel, "cancel can't be null");
-        this.ciPlugin = plugin;
+        this.plugin = plugin;
         this.sender = sender;
         this.invalidInputMessage = invalidInputMessage;
         this.sendValueMessage = sendValueMessage;
@@ -156,10 +156,10 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
      */
     @Override
     public final void start() {
-        this.ciPlugin.registerEvent(this.get());
+        this.plugin.registerEvent(this.get());
         if (this.expire != -1L) {
             this.expireTask = this.createTask(
-                this.ciPlugin.createRunTaskLater(() ->
+                this.plugin.createRunTaskLater(() ->
                     this.getExpireTask()
                         .filter(task -> !task.isCancelled())
                         .ifPresent(task -> {
