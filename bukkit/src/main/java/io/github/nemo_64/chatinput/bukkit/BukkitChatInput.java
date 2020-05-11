@@ -25,7 +25,7 @@
 package io.github.nemo_64.chatinput.bukkit;
 
 import io.github.nemo_64.chatinput.ChatInputPlugin;
-import io.github.nemo_64.chatinput.PlayerChatInput;
+import io.github.nemo_64.chatinput.CoreChatInput;
 import io.github.nemo_64.chatinput.Task;
 import io.github.nemo_64.chatinput.bukkit.impl.*;
 import java.util.function.BiConsumer;
@@ -42,7 +42,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class BukkitChatInput<T> extends PlayerChatInput<T, Player, BkktSender, BukkitTask, BkktChatEvent,
+public final class BukkitChatInput<T> extends CoreChatInput<T, Player, BkktSender, BukkitTask, BkktChatEvent,
     BkktQuitEvent, Listener> implements Listener {
 
     public BukkitChatInput(@NotNull final ChatInputPlugin<BukkitTask, Listener> plugin,

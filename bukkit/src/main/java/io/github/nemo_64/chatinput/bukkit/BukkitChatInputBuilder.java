@@ -25,7 +25,7 @@
 package io.github.nemo_64.chatinput.bukkit;
 
 import io.github.nemo_64.chatinput.ChatInputBuilder;
-import io.github.nemo_64.chatinput.PlayerChatInput;
+import io.github.nemo_64.chatinput.CoreChatInput;
 import io.github.nemo_64.chatinput.bukkit.impl.BkktPlugin;
 import io.github.nemo_64.chatinput.bukkit.impl.BkktSender;
 import org.bukkit.entity.Player;
@@ -35,9 +35,9 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Builder for the {@link PlayerChatInput} class
+ * Builder for the {@link CoreChatInput} class
  *
- * @param <T> The {@link PlayerChatInput} type
+ * @param <T> The {@link CoreChatInput} type
  * @author Nemo_64
  */
 public final class BukkitChatInputBuilder<T> extends ChatInputBuilder<T, Player, BkktSender, BukkitTask, Listener> {
@@ -61,9 +61,9 @@ public final class BukkitChatInputBuilder<T> extends ChatInputBuilder<T, Player,
     }
 
     /**
-     * Creates the {@link PlayerChatInput}
+     * Creates the {@link CoreChatInput}
      *
-     * @return A new {@link PlayerChatInput}
+     * @return A new {@link CoreChatInput}
      */
     @NotNull
     @Override

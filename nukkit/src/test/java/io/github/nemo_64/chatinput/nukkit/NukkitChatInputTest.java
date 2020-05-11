@@ -25,12 +25,10 @@
 package io.github.nemo_64.chatinput.nukkit;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.scheduler.TaskHandler;
 import io.github.nemo_64.chatinput.Task;
 import java.util.UUID;

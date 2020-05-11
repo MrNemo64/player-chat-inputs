@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Nemo_64
  * @version 1.1
  */
-public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends ChatEvent<P>, B extends QuitEvent<P>, L>
+public abstract class CoreChatInput<T, P, S extends Sender<P>, X, A extends ChatEvent<P>, B extends QuitEvent<P>, L>
     implements ChatInput<T, X, L> {
 
     @NotNull
@@ -105,14 +105,14 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
      * @param expire if sender don't complete the situation until the expire time {@link #onExpire} will run.
      * @param repeat will use when the sender complete the situation and the situation repeats.
      */
-    protected PlayerChatInput(@NotNull final ChatInputPlugin<X, L> plugin, @NotNull final S sender, @Nullable final T startOn,
-                              @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
-                              @NotNull final BiFunction<S, String, Boolean> isValidInput,
-                              @NotNull final BiFunction<S, String, T> setValue,
-                              @NotNull final BiConsumer<S, T> onFinish, @NotNull final Consumer<S> onCancel,
-                              @NotNull final String cancel,
-                              @NotNull final BiFunction<S, String, Boolean> onInvalidInput, final boolean repeat,
-                              @NotNull final Consumer<S> onExpire, final long expire) {
+    protected CoreChatInput(@NotNull final ChatInputPlugin<X, L> plugin, @NotNull final S sender, @Nullable final T startOn,
+                            @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
+                            @NotNull final BiFunction<S, String, Boolean> isValidInput,
+                            @NotNull final BiFunction<S, String, T> setValue,
+                            @NotNull final BiConsumer<S, T> onFinish, @NotNull final Consumer<S> onCancel,
+                            @NotNull final String cancel,
+                            @NotNull final BiFunction<S, String, Boolean> onInvalidInput, final boolean repeat,
+                            @NotNull final Consumer<S> onExpire, final long expire) {
         Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(sender, "sender can't be null");
         Objects.requireNonNull(isValidInput, "isValidInput can't be null");

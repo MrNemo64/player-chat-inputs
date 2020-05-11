@@ -33,7 +33,7 @@ import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.TaskHandler;
 import io.github.nemo_64.chatinput.ChatInputPlugin;
-import io.github.nemo_64.chatinput.PlayerChatInput;
+import io.github.nemo_64.chatinput.CoreChatInput;
 import io.github.nemo_64.chatinput.Task;
 import io.github.nemo_64.chatinput.nukkit.impl.*;
 import java.util.function.BiConsumer;
@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class NukkitChatInput<T> extends PlayerChatInput<T, Player, NkktSender, TaskHandler, NkktChatEvent,
+public final class NukkitChatInput<T> extends CoreChatInput<T, Player, NkktSender, TaskHandler, NkktChatEvent,
     NkktQuitEvent, Listener> implements Listener {
 
     public NukkitChatInput(@NotNull final ChatInputPlugin<TaskHandler, Listener> ciPlugin,
