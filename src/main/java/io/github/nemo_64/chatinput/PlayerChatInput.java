@@ -106,6 +106,7 @@ public final class PlayerChatInput<T> implements Listener {
      * sends, it must be converted to the value latter
      * @param onFinish Called when the player inputs a valid string
      * @param onCancel Called when the player cancels
+     * @param onExpire Called when the player didn't complete the situation
      * @param cancel The string that the player has to send to cancel the process
      * @param onInvalidInput Called when the input is invalid
      */
