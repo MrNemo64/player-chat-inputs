@@ -210,10 +210,10 @@ public final class PlayerChatInput<T> implements Listener {
     public static final class PlayerChatInputBuilder<U> {
 
         @NotNull
-        private final Player player;
+        private final Plugin main;
 
         @NotNull
-        private final Plugin main;
+        private final Player player;
 
         @NotNull
         private BiFunction<Player, String, Boolean> onInvalidInput;
