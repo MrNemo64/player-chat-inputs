@@ -243,7 +243,7 @@ public class PlayerChatInput<T> implements Listener {
         /**
          * Sets the code that will be ejecuted if the player send an invalid input
          *
-         * @param onInvalidInput A {@link java.util.function.BiFunction BiFunction} with the code
+         * @param onInvalidInput A {@link BiFunction} with the code
          * to be ejected <br>
          * If this returns true, the message setted with the
          * {@link #invalidInputMessage(String)} will be sent to the player
