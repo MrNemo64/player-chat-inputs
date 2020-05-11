@@ -32,30 +32,37 @@ public final class TestCommand implements CommandExecutor {
         // This comand will ask for a number n and will send to the player n! so we will
         // work with integers
         final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.builder(ciPlugin, player)
-            .isValidInput((p, str) -> { // Set the validation
+            .isValidInput((player, input) -> { // Set the validation
                 try {
-                    int val = Integer.valueOf(str);
+                    int val = Integer.valueOf(input);
                     return val > 0;// We only accept numbers greater than 0
                 } catch (Exception e) {
                     return false;// The input was not an integer
                 }
             })
-            .setValue((p, str) -> {
+            .setValue((player, input) -> {
                 // We convert the input string to a number
-                return Integer.valueOf(str);
+                return Integer.valueOf(input);
             })
-            .onInvalidInput((p, str) -> {
-                p.sendMessage("That is not a number"); // Send a message if the input is invalid
-                return true; // Send the messages stablished with invalidInputMessage(String) and sendValueMessage(String)
+            .onInvalidInput((player, input) -> {
+                // Send a message if the input is invalid
+                player.sendMessage("That is not a number");
+                // Send the messages stablished with invalidInputMessage(String) and sendValueMessage(String)
+                return true;
             })
-            .onFinish((p, value) -> {
+            .onFinish((player, value) -> {
                 // when the player inputs a string that is a number greater that 0 we send a message
-                p.sendMessage(value + "! is " + factorialOf(value));
+                player.sendMessage(value + "! is " + this.factorialOf(value));
             })
-            .onCancel((p) -> {
+            .onCancel(player -> {
                 // if the player cancels, we send a message
-                p.sendMessage("Canceled the factorial-calculation");
+                player.sendMessage("Canceled the factorial-calculation");
             })
+            .onExpire(player - {
+                // if the input time expires.
+                player.sendMessage("Input expired!");
+            })
+            .expire(20 * 30)
             .invalidInputMessage("That is not a number/Can calculate the factorial of it");// Message if the input is invalid
             .sendValueMessage("Send a number to calculate"); // Asking for the number
             .toCancel("cancel"); // Message that the player must send to cancel
@@ -64,10 +71,10 @@ public final class TestCommand implements CommandExecutor {
         return false;
     }
 
-    private long factorialOf(int num) {
+    private long factorialOf(final int num) {
         if (num <= 1)
             return 1;
-        return factorialOf(num - 1) * num;
+        return this.factorialOf(num - 1) * num;
     }
 
 }
