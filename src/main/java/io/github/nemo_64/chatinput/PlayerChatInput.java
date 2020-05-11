@@ -95,7 +95,7 @@ public class PlayerChatInput<T> implements Listener {
      * Since we can't know to what transform the string that the player
      * sends, it must be converted to the value latter
      * @param onFinish Called when the player inputs a valid string
-     * @param onCancel Called when the player cancells
+     * @param onCancel Called when the player cancels
      * @param cancel The string that the player has to send to cancel the process
      * @param onInvalidInput Called when the input is invalid
      */
