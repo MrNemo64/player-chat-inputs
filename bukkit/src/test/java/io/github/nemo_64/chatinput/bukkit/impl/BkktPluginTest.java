@@ -26,21 +26,51 @@ package io.github.nemo_64.chatinput.bukkit.impl;
 
 import io.github.nemo_64.chatinput.bukkit.BukkitChatInput;
 import io.github.nemo_64.chatinput.bukkit.BukkitChatInputBuilder;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 class BkktPluginTest {
 
-    private final Plugin plugin = Mockito.mock(Plugin.class);
+    private static final Plugin plugin = Mockito.mock(Plugin.class);
+
+    private static final Server server = Mockito.mock(Server.class);
+
+    private static final PluginManager pluginManager = Mockito.mock(PluginManager.class);
+
+    private static final BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
     private final Player player = Mockito.mock(Player.class);
 
-    private final BkktPlugin bkktPlugin = new BkktPlugin(this.plugin);
+    private final BkktPlugin bkktPlugin = new BkktPlugin(BkktPluginTest.plugin);
 
-    private final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.integer(this.plugin, this.player)
+    private final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.integer(BkktPluginTest.plugin, this.player)
         .build();
+
+    private String isWorking = "not-working";
+
+    @BeforeAll
+    static void prepare() {
+        Mockito.when(BkktPluginTest.plugin.getServer())
+            .thenReturn(BkktPluginTest.server);
+        Mockito.when(BkktPluginTest.server.getPluginManager())
+            .thenReturn(BkktPluginTest.pluginManager);
+        Mockito.when(BkktPluginTest.server.getScheduler())
+            .thenReturn(BkktPluginTest.scheduler);
+        Mockito.doAnswer(invocation -> {
+            final Runnable runnable = invocation.getArgument(1);
+            runnable.run();
+            return null;
+        }).when(BkktPluginTest.scheduler)
+            .runTaskLater(ArgumentMatchers.any(Plugin.class), ArgumentMatchers.any(Runnable.class), ArgumentMatchers.any(long.class));
+    }
 
     @Test
     void registerEvent() {
@@ -49,6 +79,8 @@ class BkktPluginTest {
 
     @Test
     void createRunTaskLater() {
+        this.bkktPlugin.createRunTaskLater(() -> this.isWorking = "working", 20L);
+        Assertions.assertEquals("working", this.isWorking, "Task couldn't run!");
     }
 
 }
