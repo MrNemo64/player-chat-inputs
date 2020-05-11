@@ -22,45 +22,30 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.chatinput;
+package io.github.nemo_64.chatinput.bukkit.impl;
 
-import org.bukkit.plugin.Plugin;
+import io.github.nemo_64.chatinput.CiPlugin;
+import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-public final class CiBukkitTask implements BukkitTask, Task {
+public final class BkktCiPlugin implements CiPlugin<BukkitTask, Listener> {
 
     @NotNull
-    private final BukkitTask task;
+    private final org.bukkit.plugin.Plugin plugin;
 
-    public CiBukkitTask(@NotNull final BukkitTask task) {
-        this.task = task;
+    public BkktCiPlugin(@NotNull final org.bukkit.plugin.Plugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
-    public int getTaskId() {
-        return this.task.getTaskId();
-    }
-
-    @NotNull
-    @Override
-    public Plugin getOwner() {
-        return this.task.getOwner();
+    public void registerEvent(@NotNull final Listener event) {
+        this.plugin.getServer().getPluginManager().registerEvents(event, this.plugin);
     }
 
     @Override
-    public boolean isSync() {
-        return this.task.isSync();
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return this.task.isCancelled();
-    }
-
-    @Override
-    public void cancel() {
-        this.task.cancel();
+    public BukkitTask createRunTaskLater(@NotNull final Runnable runnable, final long time) {
+        return this.plugin.getServer().getScheduler().runTaskLater(this.plugin, runnable, time);
     }
 
 }

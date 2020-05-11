@@ -22,12 +22,15 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.chatinput;
+package io.github.nemo_64.chatinput.event;
 
-public interface Task {
+import org.jetbrains.annotations.NotNull;
 
-    boolean isCancelled();
+public interface ChatEvent<P> extends SenderEvent<P> {
 
     void cancel();
+
+    @NotNull
+    String message();
 
 }

@@ -10,17 +10,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.ciPlugin.Plugin;
 
-import io.github.nemo_64.chatinput.PlayerChatInput;
-import io.github.nemo_64.chatinput.PlayerChatInput.PlayerChatInputBuilder;
+import io.io.github.nemo_64.chatinput.PlayerChatInput;
+import io.io.github.nemo_64.chatinput.PlayerChatInput.PlayerChatInputBuilder;
 
 public final class TestCommand implements CommandExecutor {
 
-    private final Plugin plugin;
+    private final Plugin ciPlugin;
     
-    public TestCommand(final Plugin plugin) {
-        this.plugin = plugin;
+    public TestCommand(final Plugin ciPlugin) {
+        this.ciPlugin = ciPlugin;
     }
 
     @Override
@@ -32,7 +32,7 @@ public final class TestCommand implements CommandExecutor {
         final Player player = (Player) sender;
         // This comand will ask for a number n and will send to the player n! so we will
         // work with integers
-        PlayerChatInput<Integer> chatInput = new PlayerChatInputBuilder<Integer>(plugin, player)
+        PlayerChatInput<Integer> chatInput = new PlayerChatInputBuilder<Integer>(ciPlugin, player)
             .isValidInput((p, str) -> { // Set the validation
                 try {
                     int val = Integer.valueOf(str);

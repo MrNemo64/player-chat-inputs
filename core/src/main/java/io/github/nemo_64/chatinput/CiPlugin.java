@@ -24,26 +24,13 @@
 
 package io.github.nemo_64.chatinput;
 
-import java.util.Optional;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-public interface ChatInput<T> {
+public interface CiPlugin<T, L> {
+
+    void registerEvent(@NotNull L event);
 
     @NotNull
-    Optional<T> getValue();
-
-    void start();
-
-    void unregister();
-
-    @NotNull
-    Optional<Task> getExpireTask();
-
-    @NotNull
-    Optional<String> getInvalidInputMessage();
-
-    @NotNull
-    Optional<String> getSendValueMessage();
+    T createRunTaskLater(@NotNull Runnable runnable, long time);
 
 }
