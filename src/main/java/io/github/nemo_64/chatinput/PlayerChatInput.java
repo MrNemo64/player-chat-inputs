@@ -226,33 +226,37 @@ public final class PlayerChatInput<T> implements Listener {
         private final Player player;
 
         @NotNull
-        private BiFunction<Player, String, Boolean> onInvalidInput;
+        private BiFunction<Player, String, Boolean> onInvalidInput = (p, mes) -> true;
 
         @NotNull
-        private BiFunction<Player, String, Boolean> isValidInput;
+        private BiFunction<Player, String, Boolean> isValidInput = (p, mes) -> true;
 
         @NotNull
-        private BiFunction<Player, String, U> setValue;
+        private BiFunction<Player, String, U> setValue = (p, mes) -> this.value;
 
         @NotNull
-        private BiConsumer<Player, U> onFinish;
+        private BiConsumer<Player, U> onFinish = (p, val) -> {
+        };
 
         @NotNull
-        private Consumer<Player> onCancel;
+        private Consumer<Player> onCancel = p -> {
+        };
 
         @Nullable
-        private String invalidInputMessage;
+        private String invalidInputMessage = "That is not a valid input";
 
         @Nullable
-        private String sendValueMessage;
+        private String sendValueMessage = "Send in the chat the value";
+
+        private final int expire = -1;
 
         @NotNull
-        private String cancel;
+        private String cancel = "cancel";
 
         @Nullable
         private U value;
 
-        private boolean repeat;
+        private boolean repeat = true;
 
         /**
          * @param main The main class of the plugin
@@ -261,17 +265,6 @@ public final class PlayerChatInput<T> implements Listener {
         public PlayerChatInputBuilder(@NotNull final Plugin main, @NotNull final Player player) {
             this.main = main;
             this.player = player;
-            this.invalidInputMessage = "That is not a valid input";
-            this.sendValueMessage = "Send in the chat the value";
-            this.cancel = "cancel";
-            this.onInvalidInput = (p, mes) -> true;
-            this.isValidInput = (p, mes) -> true;
-            this.setValue = (p, mes) -> this.value;
-            this.onFinish = (p, val) -> {
-            };
-            this.onCancel = p -> {
-            };
-            this.repeat = true;
         }
 
         /**
