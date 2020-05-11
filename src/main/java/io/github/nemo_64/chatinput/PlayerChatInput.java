@@ -29,7 +29,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import org.bukkit.Bukkit;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -203,7 +202,7 @@ public final class PlayerChatInput<T> implements Listener {
     public void start() {
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         if (this.expire != -1L) {
-            this.expireTask = Bukkit.getScheduler().runTaskLater(this.plugin, () ->
+            this.expireTask = this.player.getServer().getScheduler().runTaskLater(this.plugin, () ->
                 this.getExpireTask()
                     .filter(task -> !task.isCancelled())
                     .ifPresent(task -> {
