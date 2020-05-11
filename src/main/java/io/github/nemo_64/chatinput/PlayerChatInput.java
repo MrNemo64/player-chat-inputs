@@ -289,7 +289,7 @@ public final class PlayerChatInput<T> implements Listener {
         @Nullable
         private U value;
 
-        private boolean repeat = true;
+        private boolean repeat = false;
 
         /**
          * @param main The main class of the plugin
