@@ -77,7 +77,7 @@ public class PlayerChatInput<T> implements Listener {
     private final String cancel;
 
     @NotNull
-    private final Plugin main;
+    private final Plugin plugin;
 
     private final boolean repeat;
 
@@ -115,7 +115,7 @@ public class PlayerChatInput<T> implements Listener {
         Objects.requireNonNull(onFinish, "onCancel can't be null");
         Objects.requireNonNull(onInvalidInput, "onInvalidInput can't be null");
         Objects.requireNonNull(cancel, "cancel can't be null");
-        this.main = plugin;
+        this.plugin = plugin;
         this.player = player;
         this.invalidInputMessgae = invalidInputMessage;
         this.sendValueMessage = sendValueMessage;
@@ -183,7 +183,7 @@ public class PlayerChatInput<T> implements Listener {
      */
     @SuppressWarnings("unused")
     public void start() {
-        main.getServer().getPluginManager().registerEvents(this, this.main);
+        plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         if (sendValueMessage != null) {
             player.sendMessage(sendValueMessage);
         }
