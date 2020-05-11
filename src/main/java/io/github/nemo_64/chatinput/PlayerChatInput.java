@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Class created to get inputs from players without using the
- * {@link Conversation Conversation} api
+ * {@link Conversation} api
  *
  * @param <T> The input type. Ex: String, Integer, Boolean
  * @author Nemo_64
