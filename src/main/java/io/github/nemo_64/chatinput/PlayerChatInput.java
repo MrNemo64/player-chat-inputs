@@ -102,8 +102,9 @@ public final class PlayerChatInput<T> implements Listener {
     public PlayerChatInput(@NotNull final Plugin plugin, @NotNull final Player player, @Nullable final T startOn,
                            @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
                            @NotNull final BiFunction<Player, String, Boolean> isValidInput,
-                           @NotNull final BiFunction<Player, String, T> setValue, @NotNull final BiConsumer<Player, T> onFinish,
-                           @NotNull final Consumer<Player> onCancel, @NotNull final String cancel,
+                           @NotNull final BiFunction<Player, String, T> setValue,
+                           @NotNull final BiConsumer<Player, T> onFinish, @NotNull final Consumer<Player> onCancel,
+                           @NotNull final String cancel,
                            @NotNull final BiFunction<Player, String, Boolean> onInvalidInput, final boolean repeat) {
         Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(player, "player can't be null");
@@ -275,7 +276,8 @@ public final class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInput.PlayerChatInputBuilder<U> onInvalidInput(@NotNull final BiFunction<Player, String, Boolean> onInvalidInput) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> onInvalidInput(
+            @NotNull final BiFunction<Player, String, Boolean> onInvalidInput) {
             this.onInvalidInput = onInvalidInput;
             return this;
         }
@@ -299,7 +301,8 @@ public final class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInput.PlayerChatInputBuilder<U> isValidInput(@NotNull final BiFunction<Player, String, Boolean> isValidInput) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> isValidInput(
+            @NotNull final BiFunction<Player, String, Boolean> isValidInput) {
             this.isValidInput = isValidInput;
             return this;
         }
@@ -316,7 +319,8 @@ public final class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInput.PlayerChatInputBuilder<U> setValue(@NotNull final BiFunction<Player, String, U> setValue) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> setValue(
+            @NotNull final BiFunction<Player, String, U> setValue) {
             this.setValue = setValue;
             return this;
         }
