@@ -22,38 +22,31 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.nukkit.impl;
+package io.github.nemo_64.chatinput.nukkit.impl;
 
-import cn.nukkit.Player;
-import cn.nukkit.event.player.PlayerChatEvent;
-import io.github.nemo_64.chatinput.Sender;
-import io.github.nemo_64.chatinput.event.ChatEvent;
+import cn.nukkit.event.Listener;
+import cn.nukkit.plugin.Plugin;
+import cn.nukkit.scheduler.TaskHandler;
+import io.github.nemo_64.chatinput.CiPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public final class NkktChatEvent implements ChatEvent<Player> {
+public final class NkktPlugin implements CiPlugin<TaskHandler, Listener> {
 
     @NotNull
-    private final PlayerChatEvent event;
+    private final Plugin plugin;
 
-    public NkktChatEvent(@NotNull final PlayerChatEvent event) {
-        this.event = event;
+    public NkktPlugin(@NotNull final Plugin plugin) {
+        this.plugin = plugin;
     }
 
     @Override
-    public void cancel() {
-        this.event.setCancelled(true);
+    public void registerEvent(@NotNull final Listener event) {
+        this.plugin.getServer().getPluginManager().registerEvents(event, this.plugin);
     }
 
-    @NotNull
     @Override
-    public String message() {
-        return this.event.getMessage();
-    }
-
-    @NotNull
-    @Override
-    public Sender<Player> sender() {
-        return new NkktSender(this.event.getPlayer());
+    public TaskHandler createRunTaskLater(@NotNull final Runnable runnable, final long time) {
+        return this.plugin.getServer().getScheduler().scheduleDelayedTask(this.plugin, runnable, (int) time);
     }
 
 }

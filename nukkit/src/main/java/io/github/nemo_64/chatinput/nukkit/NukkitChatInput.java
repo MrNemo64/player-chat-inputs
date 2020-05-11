@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.nukkit;
+package io.github.nemo_64.chatinput.nukkit;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
@@ -35,7 +35,7 @@ import cn.nukkit.scheduler.TaskHandler;
 import io.github.nemo_64.chatinput.CiPlugin;
 import io.github.nemo_64.chatinput.PlayerChatInput;
 import io.github.nemo_64.chatinput.Task;
-import io.github.nemo_64.nukkit.impl.*;
+import io.github.nemo_64.chatinput.nukkit.impl.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;

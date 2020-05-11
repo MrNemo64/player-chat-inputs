@@ -22,29 +22,38 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.nukkit.impl;
+package io.github.nemo_64.chatinput.nukkit.impl;
 
-import cn.nukkit.scheduler.TaskHandler;
-import io.github.nemo_64.chatinput.Task;
+import cn.nukkit.Player;
+import cn.nukkit.event.player.PlayerChatEvent;
+import io.github.nemo_64.chatinput.Sender;
+import io.github.nemo_64.chatinput.event.ChatEvent;
 import org.jetbrains.annotations.NotNull;
 
-public final class NkktTask implements Task<TaskHandler> {
+public final class NkktChatEvent implements ChatEvent<Player> {
 
     @NotNull
-    private final TaskHandler task;
+    private final PlayerChatEvent event;
 
-    public NkktTask(@NotNull final TaskHandler task) {
-        this.task = task;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return this.task.isCancelled();
+    public NkktChatEvent(@NotNull final PlayerChatEvent event) {
+        this.event = event;
     }
 
     @Override
     public void cancel() {
-        this.task.cancel();
+        this.event.setCancelled(true);
+    }
+
+    @NotNull
+    @Override
+    public String message() {
+        return this.event.getMessage();
+    }
+
+    @NotNull
+    @Override
+    public Sender<Player> sender() {
+        return new NkktSender(this.event.getPlayer());
     }
 
 }

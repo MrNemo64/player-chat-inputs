@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.nukkit;
+package io.github.nemo_64.chatinput.nukkit;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.Listener;
@@ -30,8 +30,8 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.TaskHandler;
 import io.github.nemo_64.chatinput.ChatInputBuilder;
 import io.github.nemo_64.chatinput.PlayerChatInput;
-import io.github.nemo_64.nukkit.impl.NkktPlugin;
-import io.github.nemo_64.nukkit.impl.NkktSender;
+import io.github.nemo_64.chatinput.nukkit.impl.NkktPlugin;
+import io.github.nemo_64.chatinput.nukkit.impl.NkktSender;
 import org.jetbrains.annotations.NotNull;
 
 /**

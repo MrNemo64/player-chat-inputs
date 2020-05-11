@@ -22,31 +22,29 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.nukkit.impl;
+package io.github.nemo_64.chatinput.nukkit.impl;
 
-import cn.nukkit.event.Listener;
-import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.TaskHandler;
-import io.github.nemo_64.chatinput.CiPlugin;
+import io.github.nemo_64.chatinput.Task;
 import org.jetbrains.annotations.NotNull;
 
-public final class NkktPlugin implements CiPlugin<TaskHandler, Listener> {
+public final class NkktTask implements Task<TaskHandler> {
 
     @NotNull
-    private final Plugin plugin;
+    private final TaskHandler task;
 
-    public NkktPlugin(@NotNull final Plugin plugin) {
-        this.plugin = plugin;
+    public NkktTask(@NotNull final TaskHandler task) {
+        this.task = task;
     }
 
     @Override
-    public void registerEvent(@NotNull final Listener event) {
-        this.plugin.getServer().getPluginManager().registerEvents(event, this.plugin);
+    public boolean isCancelled() {
+        return this.task.isCancelled();
     }
 
     @Override
-    public TaskHandler createRunTaskLater(@NotNull final Runnable runnable, final long time) {
-        return this.plugin.getServer().getScheduler().scheduleDelayedTask(this.plugin, runnable, (int) time);
+    public void cancel() {
+        this.task.cancel();
     }
 
 }

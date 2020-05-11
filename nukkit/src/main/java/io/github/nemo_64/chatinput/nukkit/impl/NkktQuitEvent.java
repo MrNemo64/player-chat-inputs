@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.nukkit.impl;
+package io.github.nemo_64.chatinput.nukkit.impl;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerQuitEvent;
