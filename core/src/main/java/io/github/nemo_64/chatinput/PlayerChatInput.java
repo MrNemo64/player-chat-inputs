@@ -102,7 +102,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
      * @param onExpire Called when the sender didn't complete the situation
      * @param cancel The string that the sender has to send to cancel the process
      * @param onInvalidInput Called when the input is invalid
-     * @param expire 
+     * @param expire if sender don't complete the situation until the expire time {@link #onExpire} will run.
      * @param repeat will use when the sender complete the situation and the situation repeats.
      */
     protected PlayerChatInput(@NotNull final ChatInputPlugin<X, L> plugin, @NotNull final S sender, @Nullable final T startOn,
