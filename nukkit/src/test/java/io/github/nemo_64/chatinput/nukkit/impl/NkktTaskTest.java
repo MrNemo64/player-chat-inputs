@@ -24,7 +24,7 @@
 
 package io.github.nemo_64.chatinput.nukkit.impl;
 
-import org.bukkit.scheduler.BukkitTask;
+import cn.nukkit.scheduler.TaskHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,11 +32,11 @@ import org.mockito.Mockito;
 
 final class NkktTaskTest {
 
-    private static final BukkitTask task = Mockito.mock(BukkitTask.class);
+    private static final TaskHandler task = Mockito.mock(TaskHandler.class);
 
     private static boolean cancelled = false;
 
-    private final BkktTask bkktTask = new BkktTask(NkktTaskTest.task);
+    private final NkktTask bkktTask = new NkktTask(NkktTaskTest.task);
 
     @BeforeAll
     static void prepare() {
