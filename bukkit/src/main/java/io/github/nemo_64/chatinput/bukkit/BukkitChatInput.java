@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
 public final class BukkitChatInput<T> extends PlayerChatInput<T, Player, BkktSender, BukkitTask, BkktChatEvent,
     BkktQuitEvent, Listener> implements Listener {
 
-    public BukkitChatInput(@NotNull final ChatInputPlugin<BukkitTask, Listener> ciPlugin,
+    public BukkitChatInput(@NotNull final ChatInputPlugin<BukkitTask, Listener> plugin,
                            @NotNull final BkktSender sender, @Nullable final T startOn,
                            @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
                            @NotNull final BiFunction<BkktSender, String, Boolean> isValidInput,
@@ -54,7 +54,7 @@ public final class BukkitChatInput<T> extends PlayerChatInput<T, Player, BkktSen
                            @NotNull final Consumer<BkktSender> onCancel, @NotNull final String cancel,
                            @NotNull final BiFunction<BkktSender, String, Boolean> onInvalidInput,
                            final boolean repeat, @NotNull final Consumer<BkktSender> onExpire, final long expire) {
-        super(ciPlugin, sender, startOn, invalidInputMessage, sendValueMessage,
+        super(plugin, sender, startOn, invalidInputMessage, sendValueMessage,
             isValidInput, setValue, onFinish, onCancel, cancel, onInvalidInput, repeat, onExpire, expire);
     }
 

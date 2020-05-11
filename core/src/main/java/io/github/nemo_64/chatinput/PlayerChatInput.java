@@ -88,7 +88,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
     protected T value;
 
     /**
-     * @param ciPlugin The main class of the plugin
+     * @param plugin The main class of the plugin
      * @param sender The sender that is going to input the value
      * @param startOn The start value
      * @param invalidInputMessage Message that will be sent to the sender if the input is invalid
@@ -103,7 +103,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
      * @param cancel The string that the sender has to send to cancel the process
      * @param onInvalidInput Called when the input is invalid
      */
-    protected PlayerChatInput(@NotNull final ChatInputPlugin<X, L> ciPlugin, @NotNull final S sender, @Nullable final T startOn,
+    protected PlayerChatInput(@NotNull final ChatInputPlugin<X, L> plugin, @NotNull final S sender, @Nullable final T startOn,
                               @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
                               @NotNull final BiFunction<S, String, Boolean> isValidInput,
                               @NotNull final BiFunction<S, String, T> setValue,
@@ -111,7 +111,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
                               @NotNull final String cancel,
                               @NotNull final BiFunction<S, String, Boolean> onInvalidInput, final boolean repeat,
                               @NotNull final Consumer<S> onExpire, final long expire) {
-        Objects.requireNonNull(ciPlugin, "plugin can't be null");
+        Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(sender, "sender can't be null");
         Objects.requireNonNull(isValidInput, "isValidInput can't be null");
         Objects.requireNonNull(setValue, "setValue can't be null");
@@ -120,7 +120,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
         Objects.requireNonNull(onExpire, "onExpire can't be null");
         Objects.requireNonNull(onInvalidInput, "onInvalidInput can't be null");
         Objects.requireNonNull(cancel, "cancel can't be null");
-        this.ciPlugin = ciPlugin;
+        this.ciPlugin = plugin;
         this.sender = sender;
         this.invalidInputMessage = invalidInputMessage;
         this.sendValueMessage = sendValueMessage;

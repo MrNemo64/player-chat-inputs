@@ -30,7 +30,7 @@ public final class TestCommand implements CommandExecutor {
         }
         // This comand will ask for a number n and will send to the player n! so we will
         // work with integers
-        final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.builder(plugin, (Player) sender)
+        final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.<Integer>builder(plugin, (Player) sender)
             .isValidInput((player, input) -> { // Set the validation
                 try {
                     int val = Integer.valueOf(input);

@@ -24,6 +24,7 @@
 
 package io.github.nemo_64.chatinput.bukkit;
 
+import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
@@ -42,8 +43,8 @@ class BukkitChatInputBuilderTest {
 
     @Test
     void build() {
-        final BukkitChatInput<Integer> builder = BukkitChatInputBuilder.builder(this.plugin, this.player)
-            .build();
+        final BukkitChatInputBuilder<Integer> builder = new BukkitChatInputBuilder<>(this.plugin, this.player);
+        final BukkitChatInput<Integer> build = builder.build();
     }
 
 }

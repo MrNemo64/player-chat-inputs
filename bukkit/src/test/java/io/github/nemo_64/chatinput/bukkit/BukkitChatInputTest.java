@@ -24,12 +24,19 @@
 
 package io.github.nemo_64.chatinput.bukkit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class BukkitChatInputTest {
 
-    private final BukkitChatInput<Integer> chatInput = ;
+    private final Plugin plugin = Mockito.mock(Plugin.class);
+
+    private final Player player = Mockito.mock(Player.class);
+
+    private final BukkitChatInput<Integer> chatInput = BukkitChatInputBuilder.builder(this.plugin, this.player)
+        .build();
 
     @Test
     void createTask() {
