@@ -355,26 +355,26 @@ public final class PlayerChatInput<T> implements Listener {
         /**
          * Message to be sent to the player when the input is invalid
          *
-         * @param invalidInputMessage The message
+         * @param message The message
          * @return the builder.
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInput.PlayerChatInputBuilder<U> invalidInputMessage(@Nullable final String invalidInputMessage) {
-            this.invalidInputMessage = invalidInputMessage;
+        public PlayerChatInput.PlayerChatInputBuilder<U> invalidInputMessage(@Nullable final String message) {
+            this.invalidInputMessage = message;
             return this;
         }
 
         /**
          * Message to be sent to the player when asking for the input
          *
-         * @param sendValueMessage The message
+         * @param message The message
          * @return the builder.
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInput.PlayerChatInputBuilder<U> sendValueMessage(@Nullable final String sendValueMessage) {
-            this.sendValueMessage = sendValueMessage;
+        public PlayerChatInput.PlayerChatInputBuilder<U> sendValueMessage(@Nullable final String message) {
+            this.sendValueMessage = message;
             return this;
         }
 
