@@ -67,10 +67,10 @@ public class PlayerChatInput<T> implements Listener {
     @NotNull
     private final Player player;
 
-    @NotNull
+    @Nullable
     private final String invalidInputMessage;
 
-    @NotNull
+    @Nullable
     private final String sendValueMessage;
 
     @NotNull
@@ -99,16 +99,14 @@ public class PlayerChatInput<T> implements Listener {
      * @param cancel The string that the player has to send to cancel the process
      * @param onInvalidInput Called when the input is invalid
      */
-    public PlayerChatInput(@NotNull Plugin plugin, @NotNull Player player, @NotNull T startOn,
-                           @NotNull String invalidInputMessage, @NotNull String sendValueMessage,
+    public PlayerChatInput(@NotNull Plugin plugin, @NotNull Player player, @Nullable T startOn,
+                           @Nullable String invalidInputMessage, @Nullable String sendValueMessage,
                            @NotNull BiFunction<Player, String, Boolean> isValidInput,
                            @NotNull BiFunction<Player, String, T> setValue, @NotNull BiConsumer<Player, T> onFinish,
                            @NotNull Consumer<Player> onCancel, @NotNull String cancel,
                            @NotNull BiFunction<Player, String, Boolean> onInvalidInput, boolean repeat) {
         Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(player, "player can't be null");
-        Objects.requireNonNull(invalidInputMessage, "isValidInput can't be null");
-        Objects.requireNonNull(sendValueMessage, "isValidInput can't be null");
         Objects.requireNonNull(isValidInput, "isValidInput can't be null");
         Objects.requireNonNull(setValue, "setValue can't be null");
         Objects.requireNonNull(onFinish, "onFinish can't be null");
@@ -207,26 +205,37 @@ public class PlayerChatInput<T> implements Listener {
      */
     public static final class PlayerChatInputBuilder<U> {
 
+        @NotNull
         private final Player player;
 
+        @NotNull
         private final Plugin main;
 
+        @NotNull
         private BiFunction<Player, String, Boolean> onInvalidInput;
 
+        @NotNull
         private BiFunction<Player, String, Boolean> isValidInput;
 
+        @NotNull
         private BiFunction<Player, String, U> setValue;
 
+        @NotNull
         private BiConsumer<Player, U> onFinish;
 
+        @NotNull
         private Consumer<Player> onCancel;
 
+        @Nullable
         private String invalidInputMessage;
 
+        @Nullable
         private String sendValueMessage;
 
+        @NotNull
         private String cancel;
 
+        @Nullable
         private U value;
 
         private boolean repeat;
