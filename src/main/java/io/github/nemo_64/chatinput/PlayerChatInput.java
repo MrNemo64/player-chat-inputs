@@ -68,7 +68,7 @@ public class PlayerChatInput<T> implements Listener {
     private final Player player;
 
     @NotNull
-    private final String invalidInputMessgae;
+    private final String invalidInputMessage;
 
     @NotNull
     private final String sendValueMessage;
@@ -117,7 +117,7 @@ public class PlayerChatInput<T> implements Listener {
         Objects.requireNonNull(cancel, "cancel can't be null");
         this.plugin = plugin;
         this.player = player;
-        this.invalidInputMessgae = invalidInputMessage;
+        this.invalidInputMessage = invalidInputMessage;
         this.sendValueMessage = sendValueMessage;
         this.isValidInput = isValidInput;
         this.setValue = setValue;
@@ -146,8 +146,8 @@ public class PlayerChatInput<T> implements Listener {
             unregister();
         } else {
             if (onInvalidInput.apply(player, e.getMessage())) {
-                if (invalidInputMessgae != null) {
-                    player.sendMessage(invalidInputMessgae);
+                if (invalidInputMessage != null) {
+                    player.sendMessage(invalidInputMessage);
                 }
                 if (sendValueMessage != null && repeat) {
                     player.sendMessage(sendValueMessage);
