@@ -153,17 +153,18 @@ public final class PlayerChatInput<T> implements Listener {
             return;
         }
         event.setCancelled(true);
-        if (event.getMessage().equalsIgnoreCase(this.cancel)) {
+        final String message = event.getMessage();
+        if (message.equalsIgnoreCase(this.cancel)) {
             this.onCancel.accept(this.player);
             this.unregister();
             return;
         }
-        if (this.isValidInput.apply(this.player, event.getMessage())) {
-            this.value = this.setValue.apply(this.player, event.getMessage());
+        if (this.isValidInput.apply(this.player, message)) {
+            this.value = this.setValue.apply(this.player, message);
             this.onFinish.accept(this.player, this.value);
             this.unregister();
         } else {
-            if (this.onInvalidInput.apply(this.player, event.getMessage())) {
+            if (this.onInvalidInput.apply(this.player, message)) {
                 this.getInvalidInputMessage()
                     .ifPresent(this.player::sendMessage);
                 this.getSendValueMessage()
