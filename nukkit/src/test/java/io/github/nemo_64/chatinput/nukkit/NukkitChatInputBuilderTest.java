@@ -29,7 +29,7 @@ import cn.nukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-final class NukkitChatInputBuilderTest {
+public final class NukkitChatInputBuilderTest {
 
     private final Plugin plugin = Mockito.mock(Plugin.class);
 

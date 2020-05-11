@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-final class NkktQuitEventTest {
+public final class NkktQuitEventTest {
 
     private final Player player = Mockito.mock(Player.class);
 

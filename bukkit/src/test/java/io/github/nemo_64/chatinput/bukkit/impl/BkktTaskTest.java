@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-final class BkktTaskTest {
+public final class BkktTaskTest {
 
     private static final BukkitTask task = Mockito.mock(BukkitTask.class);
 

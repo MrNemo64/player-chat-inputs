@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-final class NkktSenderTest {
+public final class NkktSenderTest {
 
     private static final UUID uuid = UUID.randomUUID();
 

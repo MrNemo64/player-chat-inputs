@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-final class NkktTaskTest {
+public final class NkktTaskTest {
 
     private static final TaskHandler task = Mockito.mock(TaskHandler.class);
 

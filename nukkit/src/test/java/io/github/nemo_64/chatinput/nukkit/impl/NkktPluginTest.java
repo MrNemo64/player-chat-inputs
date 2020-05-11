@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-final class NkktPluginTest {
+public final class NkktPluginTest {
 
     private static final Plugin plugin = Mockito.mock(Plugin.class);
 

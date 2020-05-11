@@ -38,7 +38,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-final class BukkitChatInputTest {
+public final class BukkitChatInputTest {
 
     public static final UUID PLAYER_UUID = UUID.randomUUID();
 
