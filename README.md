@@ -15,24 +15,21 @@ import org.bukkit.plugin.Plugin;
 import me.nemo_64.chatinput.PlayerChatInput;
 import me.nemo_64.chatinput.PlayerChatInput.PlayerChatInputBuilder;
 
-public class TestCommand implements CommandExecutor {
+public final class TestCommand implements CommandExecutor {
 
     private final Plugin plugin;
     
-    public TestCommand(Plugin plugin) {
+    public TestCommand(final Plugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-    
         if (!(sender instanceof Player)) { // PlayerChatInput only works with players
                sender.sendMessage("Only for players");
                return false;
         }
-    
-        Player player = (Player) sender;
-    
+        final Player player = (Player) sender;
         // This comand will ask for a number n and will send to the player n! so we will
         // work with integers
         PlayerChatInput<Integer> chatInput = new PlayerChatInputBuilder<Integer>(plugin, player)
@@ -64,9 +61,7 @@ public class TestCommand implements CommandExecutor {
             .sendValueMessage("Send a number to calculate"); // Asking for the number
             .toCancel("cancel"); // Message that the player must send to cancel
             .build(); // Build the PlayerChatInput
-    
         chatInput.start(); // Ask for the number
-
         return false;
     }
 
