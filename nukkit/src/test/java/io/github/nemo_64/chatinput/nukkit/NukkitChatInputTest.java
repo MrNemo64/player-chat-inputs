@@ -22,23 +22,24 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.chatinput.bukkit;
+package io.github.nemo_64.chatinput.nukkit;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.player.PlayerChatEvent;
+import cn.nukkit.event.player.PlayerQuitEvent;
+import cn.nukkit.plugin.Plugin;
+import cn.nukkit.plugin.PluginManager;
+import cn.nukkit.scheduler.TaskHandler;
 import io.github.nemo_64.chatinput.Task;
-import java.util.HashSet;
 import java.util.UUID;
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-final class BukkitChatInputTest {
+final class NukkitChatInputTest {
 
     public static final UUID PLAYER_UUID = UUID.randomUUID();
 
@@ -46,44 +47,43 @@ final class BukkitChatInputTest {
 
     private static final Player PLAYER = Mockito.mock(Player.class);
 
-    private static final BukkitChatInput<Integer> CHAT_INPUT = BukkitChatInputBuilder.integer(BukkitChatInputTest.PLUGIN, BukkitChatInputTest.PLAYER)
+    private static final NukkitChatInput<Integer> CHAT_INPUT = NukkitChatInputBuilder.<Integer>builder(NukkitChatInputTest.PLUGIN, NukkitChatInputTest.PLAYER)
         .build();
 
-    private final BukkitTask bukkitTask = Mockito.mock(BukkitTask.class);
+    private final TaskHandler taskHandler = Mockito.mock(TaskHandler.class);
 
     @BeforeAll
     static void prepare() {
         new HandlerList();
-        Mockito.when(BukkitChatInputTest.PLAYER.getUniqueId())
-            .thenReturn(BukkitChatInputTest.PLAYER_UUID);
+        Mockito.when(NukkitChatInputTest.PLAYER.getUniqueId())
+            .thenReturn(NukkitChatInputTest.PLAYER_UUID);
     }
 
     @Test
     void createTask() {
-        final Task<BukkitTask> task = BukkitChatInputTest.CHAT_INPUT.createTask(this.bukkitTask);
+        final Task<TaskHandler> task = NukkitChatInputTest.CHAT_INPUT.createTask(this.taskHandler);
     }
 
     @Test
     void whenQuit() {
-        final PlayerQuitEvent event = new PlayerQuitEvent(BukkitChatInputTest.PLAYER, "Quit Message");
-        BukkitChatInputTest.CHAT_INPUT.whenQuit(event);
+        final PlayerQuitEvent event = new PlayerQuitEvent(NukkitChatInputTest.PLAYER, "Quit Message");
+        NukkitChatInputTest.CHAT_INPUT.whenQuit(event);
     }
 
     @Test
     void whenChat() {
-        final AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, BukkitChatInputTest.PLAYER,
-            "Test message", new HashSet<>());
-        BukkitChatInputTest.CHAT_INPUT.whenChat(event);
+        final PlayerChatEvent event = new PlayerChatEvent(NukkitChatInputTest.PLAYER, "Test message");
+        NukkitChatInputTest.CHAT_INPUT.whenChat(event);
     }
 
     @Test
     void get() {
-        Assertions.assertEquals(BukkitChatInputTest.CHAT_INPUT, BukkitChatInputTest.CHAT_INPUT.get(), "The get method in ChatInput not giving the correct object!");
+        Assertions.assertEquals(NukkitChatInputTest.CHAT_INPUT, NukkitChatInputTest.CHAT_INPUT.get(), "The get method in ChatInput not giving the correct object!");
     }
 
     @Test
     void unregisterListeners() {
-        BukkitChatInputTest.CHAT_INPUT.unregisterListeners();
+        NukkitChatInputTest.CHAT_INPUT.unregisterListeners();
     }
 
 }

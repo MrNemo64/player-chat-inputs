@@ -55,6 +55,11 @@ public final class NukkitChatInputBuilder<T> extends ChatInputBuilder<T, Player,
         return new NukkitChatInputBuilder<>(plugin, player);
     }
 
+    @NotNull
+    public static NukkitChatInputBuilder<Integer> integer(@NotNull final Plugin plugin, @NotNull final Player player) {
+        return new NukkitChatInputBuilder<>(plugin, player);
+    }
+
     /**
      * Creates the {@link PlayerChatInput}
      *

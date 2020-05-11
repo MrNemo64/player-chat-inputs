@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.chatinput.bukkit;
+package io.github.nemo_64.chatinput.nukkit;
 
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import cn.nukkit.Player;
+import cn.nukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-final class BukkitChatInputBuilderTest {
+final class NukkitChatInputBuilderTest {
 
     private final Plugin plugin = Mockito.mock(Plugin.class);
 
@@ -37,18 +37,18 @@ final class BukkitChatInputBuilderTest {
 
     @Test
     void builder() {
-        final BukkitChatInputBuilder<Integer> builder = BukkitChatInputBuilder.builder(this.plugin, this.player);
+        final NukkitChatInputBuilder<Integer> builder = NukkitChatInputBuilder.builder(this.plugin, this.player);
     }
 
     @Test
     void integer() {
-        final BukkitChatInputBuilder<Integer> builder = BukkitChatInputBuilder.integer(this.plugin, this.player);
+        final NukkitChatInputBuilder<Integer> builder = NukkitChatInputBuilder.integer(this.plugin, this.player);
     }
 
     @Test
     void build() {
-        final BukkitChatInputBuilder<Integer> builder = new BukkitChatInputBuilder<>(this.plugin, this.player);
-        final BukkitChatInput<Integer> build = builder.build();
+        final NukkitChatInputBuilder<Integer> builder = new NukkitChatInputBuilder<>(this.plugin, this.player);
+        final NukkitChatInput<Integer> build = builder.build();
     }
 
 }

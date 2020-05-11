@@ -22,33 +22,42 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.chatinput.bukkit;
+package io.github.nemo_64.chatinput.nukkit.impl;
 
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-final class BukkitChatInputBuilderTest {
+final class NkktTaskTest {
 
-    private final Plugin plugin = Mockito.mock(Plugin.class);
+    private static final BukkitTask task = Mockito.mock(BukkitTask.class);
 
-    private final Player player = Mockito.mock(Player.class);
+    private static boolean cancelled = false;
 
-    @Test
-    void builder() {
-        final BukkitChatInputBuilder<Integer> builder = BukkitChatInputBuilder.builder(this.plugin, this.player);
+    private final BkktTask bkktTask = new BkktTask(NkktTaskTest.task);
+
+    @BeforeAll
+    static void prepare() {
+        Mockito.when(NkktTaskTest.task.isCancelled())
+            .thenReturn(true);
+        Mockito.doAnswer(invocationOnMock -> {
+            NkktTaskTest.cancelled = true;
+            return null;
+        }).when(NkktTaskTest.task)
+            .cancel();
     }
 
     @Test
-    void integer() {
-        final BukkitChatInputBuilder<Integer> builder = BukkitChatInputBuilder.integer(this.plugin, this.player);
+    void isCancelled() {
+        Assertions.assertTrue(this.bkktTask.isCancelled(), "The task not cancelled!");
     }
 
     @Test
-    void build() {
-        final BukkitChatInputBuilder<Integer> builder = new BukkitChatInputBuilder<>(this.plugin, this.player);
-        final BukkitChatInput<Integer> build = builder.build();
+    void cancel() {
+        this.bkktTask.cancel();
+        Assertions.assertTrue(NkktTaskTest.cancelled, "The task couldn't be cancelled!");
     }
 
 }
