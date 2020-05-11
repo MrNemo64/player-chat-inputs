@@ -99,12 +99,12 @@ public class PlayerChatInput<T> implements Listener {
      * @param cancel The string that the player has to send to cancel the process
      * @param onInvalidInput Called when the input is invalid
      */
-    public PlayerChatInput(@NotNull Plugin plugin, @NotNull Player player, @Nullable T startOn,
-                           @Nullable String invalidInputMessage, @Nullable String sendValueMessage,
-                           @NotNull BiFunction<Player, String, Boolean> isValidInput,
-                           @NotNull BiFunction<Player, String, T> setValue, @NotNull BiConsumer<Player, T> onFinish,
-                           @NotNull Consumer<Player> onCancel, @NotNull String cancel,
-                           @NotNull BiFunction<Player, String, Boolean> onInvalidInput, boolean repeat) {
+    public PlayerChatInput(@NotNull final Plugin plugin, @NotNull final Player player, @Nullable final T startOn,
+                           @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
+                           @NotNull final BiFunction<Player, String, Boolean> isValidInput,
+                           @NotNull final BiFunction<Player, String, T> setValue, @NotNull final BiConsumer<Player, T> onFinish,
+                           @NotNull final Consumer<Player> onCancel, @NotNull final String cancel,
+                           @NotNull final BiFunction<Player, String, Boolean> onInvalidInput, final boolean repeat) {
         Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(player, "player can't be null");
         Objects.requireNonNull(isValidInput, "isValidInput can't be null");
@@ -121,47 +121,51 @@ public class PlayerChatInput<T> implements Listener {
         this.setValue = setValue;
         this.onFinish = onFinish;
         this.onCancel = onCancel;
-        this.cancel = cancel.trim().isEmpty() ? "cancel" : cancel;
+        if (cancel.trim().isEmpty()) {
+            this.cancel = "cancel";
+        } else {
+            this.cancel = cancel;
+        }
         this.onInvalidInput = onInvalidInput;
         this.value = startOn;
         this.repeat = repeat;
     }
 
     @EventHandler
-    public void onPlayerChatEvent(AsyncPlayerChatEvent e) {
-        if (!player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+    public void onPlayerChatEvent(final AsyncPlayerChatEvent e) {
+        if (!this.player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
             return;
         }
         e.setCancelled(true);
-        if (e.getMessage().equalsIgnoreCase(cancel)) {
-            onCancel.accept(player);
-            unregister();
+        if (e.getMessage().equalsIgnoreCase(this.cancel)) {
+            this.onCancel.accept(this.player);
+            this.unregister();
             return;
         }
-        if (isValidInput.apply(player, e.getMessage())) {
-            value = setValue.apply(player, e.getMessage());
-            onFinish.accept(player, value);
-            unregister();
+        if (this.isValidInput.apply(this.player, e.getMessage())) {
+            this.value = this.setValue.apply(this.player, e.getMessage());
+            this.onFinish.accept(this.player, this.value);
+            this.unregister();
         } else {
-            if (onInvalidInput.apply(player, e.getMessage())) {
-                if (invalidInputMessage != null) {
-                    player.sendMessage(invalidInputMessage);
+            if (this.onInvalidInput.apply(this.player, e.getMessage())) {
+                if (this.invalidInputMessage != null) {
+                    this.player.sendMessage(this.invalidInputMessage);
                 }
-                if (sendValueMessage != null && repeat) {
-                    player.sendMessage(sendValueMessage);
+                if (this.sendValueMessage != null && this.repeat) {
+                    this.player.sendMessage(this.sendValueMessage);
                 }
             }
-            if (!repeat) {
-                unregister();
+            if (!this.repeat) {
+                this.unregister();
             }
         }
     }
 
     @EventHandler
-    public void onPlayerDisconnect(PlayerQuitEvent e) {
-        if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-            onCancel.accept(player);
-            unregister();
+    public void onPlayerDisconnect(final PlayerQuitEvent e) {
+        if (e.getPlayer().getUniqueId().equals(this.player.getUniqueId())) {
+            this.onCancel.accept(this.player);
+            this.unregister();
         }
     }
 
@@ -173,7 +177,7 @@ public class PlayerChatInput<T> implements Listener {
     @Nullable
     @SuppressWarnings("unused")
     public T getValue() {
-        return value;
+        return this.value;
     }
 
     /**
@@ -181,9 +185,9 @@ public class PlayerChatInput<T> implements Listener {
      */
     @SuppressWarnings("unused")
     public void start() {
-        plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
-        if (sendValueMessage != null) {
-            player.sendMessage(sendValueMessage);
+        this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
+        if (this.sendValueMessage != null) {
+            this.player.sendMessage(this.sendValueMessage);
         }
     }
 
@@ -244,20 +248,20 @@ public class PlayerChatInput<T> implements Listener {
          * @param main The main class of the plugin
          * @param player The player that will send the input
          */
-        public PlayerChatInputBuilder(@NotNull Plugin main, @NotNull Player player) {
+        public PlayerChatInputBuilder(@NotNull final Plugin main, @NotNull final Player player) {
             this.main = main;
             this.player = player;
-            invalidInputMessage = "That is not a valid input";
-            sendValueMessage = "Send in the chat the value";
-            cancel = "cancel";
-            onInvalidInput = (p, mes) -> true;
-            isValidInput = (p, mes) -> true;
-            setValue = (p, mes) -> value;
-            onFinish = (p, val) -> {
+            this.invalidInputMessage = "That is not a valid input";
+            this.sendValueMessage = "Send in the chat the value";
+            this.cancel = "cancel";
+            this.onInvalidInput = (p, mes) -> true;
+            this.isValidInput = (p, mes) -> true;
+            this.setValue = (p, mes) -> this.value;
+            this.onFinish = (p, val) -> {
             };
-            onCancel = (p) -> {
+            this.onCancel = p -> {
             };
-            repeat = true;
+            this.repeat = true;
         }
 
         /**
@@ -271,7 +275,7 @@ public class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> onInvalidInput(@NotNull BiFunction<Player, String, Boolean> onInvalidInput) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> onInvalidInput(@NotNull final BiFunction<Player, String, Boolean> onInvalidInput) {
             this.onInvalidInput = onInvalidInput;
             return this;
         }
@@ -279,7 +283,7 @@ public class PlayerChatInput<T> implements Listener {
         /**
          * Checks if the given input is valid
          *
-         * @param isValidInput A {@link java.util.function.BiFunction BiFunction} with the code
+         * @param isValidInput A {@link BiFunction BiFunction} with the code
          * to be ejected <br>
          * This code must check if the value that the player has inputted is
          * valid. For example<br>
@@ -295,7 +299,7 @@ public class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> isValidInput(@NotNull BiFunction<Player, String, Boolean> isValidInput) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> isValidInput(@NotNull final BiFunction<Player, String, Boolean> isValidInput) {
             this.isValidInput = isValidInput;
             return this;
         }
@@ -306,13 +310,13 @@ public class PlayerChatInput<T> implements Listener {
          * string input to the correct variable type. Because of this, we must provide
          * the code to do the cast
          *
-         * @param setValue A {@link java.util.function.BiFunction BiFunction} with the code
+         * @param setValue A {@link BiFunction BiFunction} with the code
          * to be ejected to cast the string input to the correct type
          * @return the builder.
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> setValue(@NotNull BiFunction<Player, String, U> setValue) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> setValue(@NotNull final BiFunction<Player, String, U> setValue) {
             this.setValue = setValue;
             return this;
         }
@@ -321,13 +325,13 @@ public class PlayerChatInput<T> implements Listener {
          * Code to be ejecuted when the player inputs a valid string and the casting is
          * successful
          *
-         * @param onFinish A {@link java.util.function.BiFunction BiFunction} with the code
+         * @param onFinish A {@link BiFunction BiFunction} with the code
          * to be ejected when the player inputs a valid string
          * @return the builder.
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> onFinish(@NotNull BiConsumer<Player, U> onFinish) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> onFinish(@NotNull final BiConsumer<Player, U> onFinish) {
             this.onFinish = onFinish;
             return this;
         }
@@ -337,13 +341,13 @@ public class PlayerChatInput<T> implements Listener {
          * set<br>
          * with the {{@link #toCancel(String)}} method
          *
-         * @param onCancel A {@link java.util.function.BiFunction BiFunction} with the code
+         * @param onCancel A {@link BiFunction BiFunction} with the code
          * to be ejecuted when the player cancells the input operation
          * @return the builder.
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> onCancel(@NotNull Consumer<Player> onCancel) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> onCancel(@NotNull final Consumer<Player> onCancel) {
             this.onCancel = onCancel;
             return this;
         }
@@ -356,7 +360,7 @@ public class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> invalidInputMessage(@Nullable String invalidInputMessage) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> invalidInputMessage(@Nullable final String invalidInputMessage) {
             this.invalidInputMessage = invalidInputMessage;
             return this;
         }
@@ -369,7 +373,7 @@ public class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> sendValueMessage(@Nullable String sendValueMessage) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> sendValueMessage(@Nullable final String sendValueMessage) {
             this.sendValueMessage = sendValueMessage;
             return this;
         }
@@ -383,7 +387,7 @@ public class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> toCancel(@NotNull String cancel) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> toCancel(@NotNull final String cancel) {
             this.cancel = cancel;
             return this;
         }
@@ -396,7 +400,7 @@ public class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> defaultValue(@Nullable U def) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> defaultValue(@Nullable final U def) {
             this.value = def;
             return this;
         }
@@ -414,7 +418,7 @@ public class PlayerChatInput<T> implements Listener {
          */
         @NotNull
         @SuppressWarnings("unused")
-        public PlayerChatInputBuilder<U> repeat(boolean repeat) {
+        public PlayerChatInput.PlayerChatInputBuilder<U> repeat(final boolean repeat) {
             this.repeat = repeat;
             return this;
         }
@@ -427,8 +431,8 @@ public class PlayerChatInput<T> implements Listener {
         @NotNull
         @SuppressWarnings("unused")
         public PlayerChatInput<U> build() {
-            return new PlayerChatInput<>(main, player, value, invalidInputMessage, sendValueMessage, isValidInput,
-                setValue, onFinish, onCancel, cancel, onInvalidInput, repeat);
+            return new PlayerChatInput<>(this.main, this.player, this.value, this.invalidInputMessage, this.sendValueMessage, this.isValidInput,
+                this.setValue, this.onFinish, this.onCancel, this.cancel, this.onInvalidInput, this.repeat);
         }
 
     }
