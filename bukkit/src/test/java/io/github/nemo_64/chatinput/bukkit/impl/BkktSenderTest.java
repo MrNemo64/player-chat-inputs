@@ -24,23 +24,41 @@
 
 package io.github.nemo_64.chatinput.bukkit.impl;
 
+import java.util.UUID;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class BkktQuitEventTest {
+class BkktSenderTest {
 
-    private final Player player = Mockito.mock(Player.class);
+    private static final UUID uuid = UUID.randomUUID();
 
-    private final PlayerQuitEvent event = new PlayerQuitEvent(this.player, "Quit message");
+    private static final Player player = Mockito.mock(Player.class);
 
-    private final BkktQuitEvent bkktQuitEvent = new BkktQuitEvent(this.event);
+    private final BkktSender sender = new BkktSender(BkktSenderTest.player);
+
+    private final String isSent = "not-sent";
+
+    @BeforeAll
+    static void prepare() {
+        Mockito.when(BkktSenderTest.player.getUniqueId())
+            .thenReturn(BkktSenderTest.uuid);
+    }
 
     @Test
-    void sender() {
-        Assertions.assertEquals(this.player, this.bkktQuitEvent.sender().get(), "The sender is not same with #player!");
+    void getUniqueId() {
+        Assertions.assertTrue(this.sender.getUniqueId().equals(BkktSenderTest.player.getUniqueId()), "The uuid is not equal with the same player!");
+    }
+
+    @Test
+    void sendMessage() {
+        this.sender.
+    }
+
+    @Test
+    void get() {
     }
 
 }

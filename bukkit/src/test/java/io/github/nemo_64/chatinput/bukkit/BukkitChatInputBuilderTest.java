@@ -24,7 +24,6 @@
 
 package io.github.nemo_64.chatinput.bukkit;
 
-import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
