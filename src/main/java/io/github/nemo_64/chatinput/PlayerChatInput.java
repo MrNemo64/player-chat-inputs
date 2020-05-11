@@ -25,6 +25,7 @@
 package io.github.nemo_64.chatinput;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -149,12 +150,11 @@ public final class PlayerChatInput<T> implements Listener {
             this.unregister();
         } else {
             if (this.onInvalidInput.apply(this.player, event.getMessage())) {
-                if (this.invalidInputMessage != null) {
-                    this.player.sendMessage(this.invalidInputMessage);
-                }
-                if (this.sendValueMessage != null && this.repeat) {
-                    this.player.sendMessage(this.sendValueMessage);
-                }
+                this.getInvalidInputMessage()
+                    .ifPresent(this.player::sendMessage);
+                this.getSendValueMessage()
+                    .filter(s -> this.repeat)
+                    .ifPresent(this.player::sendMessage);
             }
             if (!this.repeat) {
                 this.unregister();
@@ -175,10 +175,10 @@ public final class PlayerChatInput<T> implements Listener {
      *
      * @return The value
      */
-    @Nullable
+    @NotNull
     @SuppressWarnings("unused")
-    public T getValue() {
-        return this.value;
+    public Optional<T> getValue() {
+        return Optional.ofNullable(this.value);
     }
 
     /**
@@ -187,9 +187,18 @@ public final class PlayerChatInput<T> implements Listener {
     @SuppressWarnings("unused")
     public void start() {
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
-        if (this.sendValueMessage != null) {
-            this.player.sendMessage(this.sendValueMessage);
-        }
+        this.getSendValueMessage()
+            .ifPresent(this.player::sendMessage);
+    }
+
+    @NotNull
+    public Optional<String> getInvalidInputMessage() {
+        return Optional.ofNullable(this.invalidInputMessage);
+    }
+
+    @NotNull
+    public Optional<String> getSendValueMessage() {
+        return Optional.ofNullable(this.sendValueMessage);
     }
 
     /**
