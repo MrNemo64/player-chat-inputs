@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Nemo_64
  * @version 1.1
  */
-public abstract class PlayerChatInput<T, S extends Sender, X, A extends ChatEvent, B extends QuitEvent, L>
+public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends ChatEvent<P>, B extends QuitEvent<P>, L>
     implements ChatInput<T, X, L> {
 
     @NotNull
