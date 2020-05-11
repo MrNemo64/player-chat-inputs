@@ -269,8 +269,7 @@ public class PlayerChatInput<T> implements Listener {
          *      } catch (final Exception ignored) {
          *          return false;
          *      }
-         *     </pre>
-         * <br>
+         *     </pre><br>
          * Will check if the input is an integer
          * @return the builder.
          */
