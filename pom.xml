@@ -37,7 +37,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>attach-javadocs</id>
+                        <id>attach-javadoc</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -62,7 +62,7 @@
 
     <repositories>
         <repository>
-            <id>spigotmc-repo</id>
+            <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>

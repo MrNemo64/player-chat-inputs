@@ -266,10 +266,10 @@ public final class PlayerChatInput<T> implements Listener {
         }
 
         /**
-         * Sets the code that will be ejecuted if the player send an invalid input
+         * Sets the code that will be executed if the player send an invalid input
          *
          * @param onInvalidInput A {@link BiFunction} with the code
-         * to be ejected <br>
+         * to be executed <br>
          * If this returns true, the message set with the
          * {@link #invalidInputMessage(String)} will be sent to the player
          * @return the builder.
@@ -286,7 +286,7 @@ public final class PlayerChatInput<T> implements Listener {
          * Checks if the given input is valid
          *
          * @param isValidInput A {@link BiFunction BiFunction} with the code
-         * to be ejected <br>
+         * to be executed <br>
          * This code must check if the value that the player has inputted is
          * valid. For example<br>
          * <pre>
@@ -314,7 +314,7 @@ public final class PlayerChatInput<T> implements Listener {
          * the code to do the cast
          *
          * @param setValue A {@link BiFunction BiFunction} with the code
-         * to be ejected to cast the string input to the correct type
+         * to be executed to cast the string input to the correct type
          * @return the builder.
          */
         @NotNull
@@ -326,11 +326,11 @@ public final class PlayerChatInput<T> implements Listener {
         }
 
         /**
-         * Code to be ejecuted when the player inputs a valid string and the casting is
+         * Code to be executed when the player inputs a valid string and the casting is
          * successful
          *
          * @param onFinish A {@link BiFunction BiFunction} with the code
-         * to be ejected when the player inputs a valid string
+         * to be executed when the player inputs a valid string
          * @return the builder.
          */
         @NotNull
@@ -341,12 +341,12 @@ public final class PlayerChatInput<T> implements Listener {
         }
 
         /**
-         * Code to be ejecuted when the player sends as input what has been previously
+         * Code to be executed when the player sends as input what has been previously
          * set<br>
          * with the {{@link #toCancel(String)}} method
          *
          * @param onCancel A {@link BiFunction BiFunction} with the code
-         * to be ejecuted when the player cancells the input operation
+         * to be executed when the player cancels the input operation
          * @return the builder.
          */
         @NotNull
