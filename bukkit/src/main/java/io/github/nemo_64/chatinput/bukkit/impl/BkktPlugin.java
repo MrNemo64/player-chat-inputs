@@ -26,15 +26,16 @@ package io.github.nemo_64.chatinput.bukkit.impl;
 
 import io.github.nemo_64.chatinput.CiPlugin;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-public final class BkktCiPlugin implements CiPlugin<BukkitTask, Listener> {
+public final class BkktPlugin implements CiPlugin<BukkitTask, Listener> {
 
     @NotNull
-    private final org.bukkit.plugin.Plugin plugin;
+    private final Plugin plugin;
 
-    public BkktCiPlugin(@NotNull final org.bukkit.plugin.Plugin plugin) {
+    public BkktPlugin(@NotNull final Plugin plugin) {
         this.plugin = plugin;
     }
 

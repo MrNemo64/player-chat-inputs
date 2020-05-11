@@ -66,7 +66,7 @@ public final class BukkitChatInput<T> extends PlayerChatInput<T, BkktSender, Buk
                            @NotNull final String cancel,
                            @NotNull final BiFunction<Player, String, Boolean> onInvalidInput, final boolean repeat,
                            @NotNull final Consumer<Player> onExpire, final long expire) {
-        this(new BkktCiPlugin(plugin), new BkktSender(sender), startOn, invalidInputMessage, sendValueMessage,
+        this(new BkktPlugin(plugin), new BkktSender(sender), startOn, invalidInputMessage, sendValueMessage,
             (bukkitSender, s) -> isValidInput.apply(bukkitSender.get(), s),
             (bukkitSender, s) -> setValue.apply(bukkitSender.get(), s),
             (bukkitSender, t) -> onFinish.accept(bukkitSender.get(), t),

@@ -25,14 +25,15 @@
 package io.github.nemo_64.chatinput.bukkit.impl;
 
 import io.github.nemo_64.chatinput.Task;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-public final class BkktTask implements Task<org.bukkit.scheduler.BukkitTask> {
+public final class BkktTask implements Task<BukkitTask> {
 
     @NotNull
-    private final org.bukkit.scheduler.BukkitTask task;
+    private final BukkitTask task;
 
-    public BkktTask(@NotNull final org.bukkit.scheduler.BukkitTask task) {
+    public BkktTask(@NotNull final BukkitTask task) {
         this.task = task;
     }
 

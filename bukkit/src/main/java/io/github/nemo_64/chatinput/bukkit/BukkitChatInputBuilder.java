@@ -26,7 +26,7 @@ package io.github.nemo_64.chatinput.bukkit;
 
 import io.github.nemo_64.chatinput.ChatInputBuilder;
 import io.github.nemo_64.chatinput.PlayerChatInput;
-import io.github.nemo_64.chatinput.bukkit.impl.BkktCiPlugin;
+import io.github.nemo_64.chatinput.bukkit.impl.BkktPlugin;
 import io.github.nemo_64.chatinput.bukkit.impl.BkktSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -47,7 +47,7 @@ public final class BukkitChatInputBuilder<T> extends ChatInputBuilder<T, Player,
      * @param player The player that will send the input
      */
     public BukkitChatInputBuilder(@NotNull final Plugin plugin, @NotNull final Player player) {
-        super(new BkktCiPlugin(plugin), new BkktSender(player));
+        super(new BkktPlugin(plugin), new BkktSender(player));
     }
 
     /**
