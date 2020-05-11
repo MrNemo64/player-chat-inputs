@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 class BkktSenderTest {
@@ -37,14 +38,19 @@ class BkktSenderTest {
 
     private static final Player player = Mockito.mock(Player.class);
 
-    private final BkktSender sender = new BkktSender(BkktSenderTest.player);
+    private static String isSent = "not-sent";
 
-    private final String isSent = "not-sent";
+    private final BkktSender sender = new BkktSender(BkktSenderTest.player);
 
     @BeforeAll
     static void prepare() {
         Mockito.when(BkktSenderTest.player.getUniqueId())
             .thenReturn(BkktSenderTest.uuid);
+        Mockito.doAnswer(invocation -> {
+            BkktSenderTest.isSent = invocation.getArgument(0);
+            return null;
+        }).when(BkktSenderTest.player)
+            .sendMessage(ArgumentMatchers.anyString());
     }
 
     @Test
@@ -54,11 +60,13 @@ class BkktSenderTest {
 
     @Test
     void sendMessage() {
-        this.sender.
+        this.sender.sendMessage("test");
+        Assertions.assertEquals("test", BkktSenderTest.isSent, "The message couldn't send to the sender!");
     }
 
     @Test
     void get() {
+        Assertions.assertEquals(player, this.sender.get(), "The sender's get method is not same with #player!");
     }
 
 }
