@@ -36,6 +36,7 @@
     <modules>
         <module>core</module>
         <module>bukkit</module>
+        <module>nukkit</module>
     </modules>
 
     <properties>

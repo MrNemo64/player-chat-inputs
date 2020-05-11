@@ -22,43 +22,43 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.chatinput.bukkit;
+package io.github.nemo_64.nukkit;
 
+import cn.nukkit.Player;
+import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.Listener;
+import cn.nukkit.event.player.PlayerChatEvent;
+import cn.nukkit.event.player.PlayerQuitEvent;
+import cn.nukkit.plugin.Plugin;
+import cn.nukkit.scheduler.TaskHandler;
 import io.github.nemo_64.chatinput.CiPlugin;
 import io.github.nemo_64.chatinput.PlayerChatInput;
 import io.github.nemo_64.chatinput.Task;
-import io.github.nemo_64.chatinput.bukkit.impl.*;
+import io.github.nemo_64.nukkit.impl.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class BukkitChatInput<T> extends PlayerChatInput<T, Player, BkktSender, BukkitTask, BkktChatEvent,
-    BkktQuitEvent, Listener> implements Listener {
+public final class NukkitChatInput<T> extends PlayerChatInput<T, Player, NkktSender, TaskHandler, NkktChatEvent,
+    NkktQuitEvent, Listener> implements Listener {
 
-    public BukkitChatInput(@NotNull final CiPlugin<BukkitTask, Listener> ciPlugin,
-                           @NotNull final BkktSender sender, @Nullable final T startOn,
+    public NukkitChatInput(@NotNull final CiPlugin<TaskHandler, Listener> ciPlugin,
+                           @NotNull final NkktSender sender, @Nullable final T startOn,
                            @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
-                           @NotNull final BiFunction<BkktSender, String, Boolean> isValidInput,
-                           @NotNull final BiFunction<BkktSender, String, T> setValue,
-                           @NotNull final BiConsumer<BkktSender, T> onFinish,
-                           @NotNull final Consumer<BkktSender> onCancel, @NotNull final String cancel,
-                           @NotNull final BiFunction<BkktSender, String, Boolean> onInvalidInput,
-                           final boolean repeat, @NotNull final Consumer<BkktSender> onExpire, final long expire) {
+                           @NotNull final BiFunction<NkktSender, String, Boolean> isValidInput,
+                           @NotNull final BiFunction<NkktSender, String, T> setValue,
+                           @NotNull final BiConsumer<NkktSender, T> onFinish,
+                           @NotNull final Consumer<NkktSender> onCancel, @NotNull final String cancel,
+                           @NotNull final BiFunction<NkktSender, String, Boolean> onInvalidInput,
+                           final boolean repeat, @NotNull final Consumer<NkktSender> onExpire, final long expire) {
         super(ciPlugin, sender, startOn, invalidInputMessage, sendValueMessage,
             isValidInput, setValue, onFinish, onCancel, cancel, onInvalidInput, repeat, onExpire, expire);
     }
 
-    public BukkitChatInput(@NotNull final Plugin plugin, @NotNull final Player sender, @Nullable final T startOn,
+    public NukkitChatInput(@NotNull final Plugin plugin, @NotNull final Player sender, @Nullable final T startOn,
                            @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
                            @NotNull final BiFunction<Player, String, Boolean> isValidInput,
                            @NotNull final BiFunction<Player, String, T> setValue,
@@ -66,7 +66,7 @@ public final class BukkitChatInput<T> extends PlayerChatInput<T, Player, BkktSen
                            @NotNull final String cancel,
                            @NotNull final BiFunction<Player, String, Boolean> onInvalidInput, final boolean repeat,
                            @NotNull final Consumer<Player> onExpire, final long expire) {
-        this(new BkktPlugin(plugin), new BkktSender(sender), startOn, invalidInputMessage, sendValueMessage,
+        this(new NkktPlugin(plugin), new NkktSender(sender), startOn, invalidInputMessage, sendValueMessage,
             (bukkitSender, s) -> isValidInput.apply(bukkitSender.get(), s),
             (bukkitSender, s) -> setValue.apply(bukkitSender.get(), s),
             (bukkitSender, t) -> onFinish.accept(bukkitSender.get(), t),
@@ -77,23 +77,23 @@ public final class BukkitChatInput<T> extends PlayerChatInput<T, Player, BkktSen
 
     @NotNull
     @Override
-    public Task<BukkitTask> createTask(@NotNull final BukkitTask task) {
-        return new BkktTask(task);
+    public Task<TaskHandler> createTask(@NotNull final TaskHandler task) {
+        return new NkktTask(task);
     }
 
     @EventHandler
     public void whenQuit(final PlayerQuitEvent event) {
-        this.onQuit(new BkktQuitEvent(event));
+        this.onQuit(new NkktQuitEvent(event));
     }
 
     @EventHandler
-    public void whenChat(final AsyncPlayerChatEvent event) {
-        this.onChat(new BkktChatEvent(event));
+    public void whenChat(final PlayerChatEvent event) {
+        this.onChat(new NkktChatEvent(event));
     }
 
     @NotNull
     @Override
-    public BukkitChatInput<T> get() {
+    public NukkitChatInput<T> get() {
         return this;
     }
 
