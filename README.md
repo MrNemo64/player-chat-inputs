@@ -12,8 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import src.main.io.github.nemo_64.chatinput.PlayerChatInput;
-import src.main.io.github.nemo_64.chatinput.PlayerChatInput.PlayerChatInputBuilder;
+import io.github.nemo_64.chatinput.PlayerChatInput;
+import io.github.nemo_64.chatinput.PlayerChatInput.PlayerChatInputBuilder;
 
 public final class TestCommand implements CommandExecutor {
 
