@@ -47,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Nemo_64
  * @version 1.1
  */
-public class PlayerChatInput<T> implements Listener {
+public final class PlayerChatInput<T> implements Listener {
 
     @NotNull
     private final BiFunction<Player, String, Boolean> onInvalidInput;
@@ -132,22 +132,22 @@ public class PlayerChatInput<T> implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChatEvent(final AsyncPlayerChatEvent e) {
-        if (!this.player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+    public void onPlayerChatEvent(final AsyncPlayerChatEvent event) {
+        if (!this.player.getUniqueId().equals(event.getPlayer().getUniqueId())) {
             return;
         }
-        e.setCancelled(true);
-        if (e.getMessage().equalsIgnoreCase(this.cancel)) {
+        event.setCancelled(true);
+        if (event.getMessage().equalsIgnoreCase(this.cancel)) {
             this.onCancel.accept(this.player);
             this.unregister();
             return;
         }
-        if (this.isValidInput.apply(this.player, e.getMessage())) {
-            this.value = this.setValue.apply(this.player, e.getMessage());
+        if (this.isValidInput.apply(this.player, event.getMessage())) {
+            this.value = this.setValue.apply(this.player, event.getMessage());
             this.onFinish.accept(this.player, this.value);
             this.unregister();
         } else {
-            if (this.onInvalidInput.apply(this.player, e.getMessage())) {
+            if (this.onInvalidInput.apply(this.player, event.getMessage())) {
                 if (this.invalidInputMessage != null) {
                     this.player.sendMessage(this.invalidInputMessage);
                 }
