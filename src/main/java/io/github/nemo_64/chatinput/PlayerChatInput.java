@@ -431,8 +431,9 @@ public final class PlayerChatInput<T> implements Listener {
         @NotNull
         @SuppressWarnings("unused")
         public PlayerChatInput<U> build() {
-            return new PlayerChatInput<>(this.main, this.player, this.value, this.invalidInputMessage, this.sendValueMessage, this.isValidInput,
-                this.setValue, this.onFinish, this.onCancel, this.cancel, this.onInvalidInput, this.repeat);
+            return new PlayerChatInput<>(this.main, this.player, this.value, this.invalidInputMessage,
+                this.sendValueMessage, this.isValidInput, this.setValue, this.onFinish, this.onCancel, this.cancel,
+                this.onInvalidInput, this.repeat);
         }
 
     }
