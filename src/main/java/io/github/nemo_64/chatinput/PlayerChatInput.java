@@ -94,7 +94,7 @@ public class PlayerChatInput<T> implements Listener {
                            @NotNull BiFunction<Player, String, T> setValue, @NotNull BiConsumer<Player, T> onFinish,
                            @NotNull Consumer<Player> onCancel, @NotNull String cancel,
                            @NotNull BiFunction<Player, String, Boolean> onInvalidInput, boolean repeat) {
-        Objects.requireNonNull(plugin, "main can't be null");
+        Objects.requireNonNull(plugin, "plugin can't be null");
         Objects.requireNonNull(player, "player can't be null");
         Objects.requireNonNull(invalidInputMessgae, "isValidInput can't be null");
         Objects.requireNonNull(sendValueMessage, "isValidInput can't be null");
