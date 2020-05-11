@@ -50,6 +50,11 @@ public final class BukkitChatInputBuilder<T> extends ChatInputBuilder<T, Player,
         super(new BkktPlugin(plugin), new BkktSender(player));
     }
 
+    @NotNull
+    public static <T> BukkitChatInputBuilder<T> builder(@NotNull final Plugin plugin, @NotNull final Player player) {
+        return new BukkitChatInputBuilder<>(plugin, player);
+    }
+
     /**
      * Creates the {@link PlayerChatInput}
      *
