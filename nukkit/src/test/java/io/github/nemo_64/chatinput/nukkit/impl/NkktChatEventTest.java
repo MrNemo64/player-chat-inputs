@@ -25,24 +25,53 @@
 package io.github.nemo_64.chatinput.nukkit.impl;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerChatEvent;
+import cn.nukkit.plugin.PluginManager;
+import java.lang.reflect.Field;
+import java.util.HashSet;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 public final class NkktChatEventTest {
 
-    private final Player player = Mockito.mock(Player.class);
+    private static final Player player = Mockito.mock(Player.class);
 
-    private final PlayerChatEvent event =
-        new PlayerChatEvent(this.player, "Test message");
+    private static final PluginManager pluginManager = Mockito.mock(PluginManager.class);
 
-    private final NkktChatEvent bkktChatEvent = new NkktChatEvent(this.event);
+    private static final Server server = Mockito.mock(Server.class);
+
+    private static PlayerChatEvent event;
+
+    private final NkktChatEvent bkktChatEvent = new NkktChatEvent(NkktChatEventTest.event);
+
+    @BeforeAll
+    static void prepare() {
+        try {
+            final Field instance = Server.class.getDeclaredField("instance");
+            final boolean acc = instance.isAccessible();
+            instance.setAccessible(true);
+            instance.set(null, NkktChatEventTest.server);
+            instance.setAccessible(acc);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        Mockito.when(NkktChatEventTest.server.getPluginManager())
+            .thenReturn(NkktChatEventTest.pluginManager);
+        Mockito.doAnswer(invocationOnMock -> new HashSet<>())
+            .when(NkktChatEventTest.pluginManager)
+            .getPermissionSubscriptions(ArgumentMatchers.anyString());
+        NkktChatEventTest.event =
+            new PlayerChatEvent(NkktChatEventTest.player, "Test message");
+    }
 
     @Test
     void testCancel() {
         this.bkktChatEvent.cancel();
-        Assertions.assertTrue(this.event.isCancelled(), "The chat event couldn't be cancelled!");
+        Assertions.assertTrue(NkktChatEventTest.event.isCancelled(), "The chat event couldn't be cancelled!");
     }
 
     @Test
@@ -52,7 +81,7 @@ public final class NkktChatEventTest {
 
     @Test
     void testSender() {
-        Assertions.assertEquals(this.player, this.bkktChatEvent.sender().get(), "The chat event's sender is not the #player!");
+        Assertions.assertEquals(NkktChatEventTest.player, this.bkktChatEvent.sender().get(), "The chat event's sender is not the #player!");
     }
 
 }
