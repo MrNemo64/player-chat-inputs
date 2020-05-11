@@ -27,7 +27,7 @@ package io.github.nemo_64.chatinput;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
-public interface ChatInput<T, X, L> {
+public interface ChatInput<T, X, L> extends Get<L> {
 
     @NotNull
     Optional<T> getValue();
@@ -44,9 +44,6 @@ public interface ChatInput<T, X, L> {
 
     @NotNull
     Optional<String> getSendValueMessage();
-
-    @NotNull
-    L getListener();
 
     void unregisterListeners();
 

@@ -24,14 +24,11 @@
 
 package io.github.nemo_64.chatinput;
 
-import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
-public interface Sender<T> extends Get<T> {
+public interface Get<T> {
 
     @NotNull
-    UUID getUniqueId();
-
-    void sendMessage(@NotNull String message);
+    T get();
 
 }

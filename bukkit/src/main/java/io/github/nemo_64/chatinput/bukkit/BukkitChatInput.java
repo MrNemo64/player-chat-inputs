@@ -93,7 +93,7 @@ public final class BukkitChatInput<T> extends PlayerChatInput<T, BkktSender, Buk
 
     @NotNull
     @Override
-    public BukkitChatInput<T> getListener() {
+    public BukkitChatInput<T> get() {
         return this;
     }
 

@@ -156,7 +156,7 @@ public abstract class PlayerChatInput<T, S extends Sender, X, A extends ChatEven
      */
     @Override
     public final void start() {
-        this.ciPlugin.registerEvent(this.getListener());
+        this.ciPlugin.registerEvent(this.get());
         if (this.expire != -1L) {
             this.expireTask = this.createTask(
                 this.ciPlugin.createRunTaskLater(() ->
