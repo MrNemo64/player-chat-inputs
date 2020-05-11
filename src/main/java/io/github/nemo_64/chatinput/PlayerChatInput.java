@@ -162,8 +162,8 @@ public final class PlayerChatInput<T> implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDisconnect(final PlayerQuitEvent e) {
-        if (e.getPlayer().getUniqueId().equals(this.player.getUniqueId())) {
+    public void onPlayerDisconnect(final PlayerQuitEvent event) {
+        if (event.getPlayer().getUniqueId().equals(this.player.getUniqueId())) {
             this.onCancel.accept(this.player);
             this.unregister();
         }
