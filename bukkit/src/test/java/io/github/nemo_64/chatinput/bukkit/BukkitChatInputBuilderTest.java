@@ -22,38 +22,28 @@
  * SOFTWARE.
  */
 
-package io.github.nemo_64.chatinput.bukkit.impl;
+package io.github.nemo_64.chatinput.bukkit;
 
-import java.util.HashSet;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.junit.jupiter.api.Assertions;
+import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class BkktChatEventTest {
+class BukkitChatInputBuilderTest {
+
+    private final Plugin plugin = Mockito.mock(Plugin.class);
 
     private final Player player = Mockito.mock(Player.class);
 
-    private final AsyncPlayerChatEvent event =
-        new AsyncPlayerChatEvent(true, this.player, "Test message", new HashSet<>());
-
-    private final BkktChatEvent bkktChatEvent = new BkktChatEvent(this.event);
-
     @Test
-    void testCancel() {
-        this.bkktChatEvent.cancel();
-        Assertions.assertTrue(this.event.isCancelled(), "The chat event couldn't be cancelled!");
+    void builder() {
+        final BukkitChatInputBuilder<Integer> builder = BukkitChatInputBuilder.builder(this.plugin, this.player);
     }
 
     @Test
-    void testMessage() {
-        Assertions.assertEquals("Test message", this.bkktChatEvent.message(), "The chat event's message is not the `Test message`!");
-    }
-
-    @Test
-    void testSender() {
-        Assertions.assertEquals(this.player, this.bkktChatEvent.sender().get(), "The chat event's sender is not the #player!");
+    void build() {
+        final BukkitChatInput<Integer> builder = BukkitChatInputBuilder.builder(this.plugin, this.player)
+            .build();
     }
 
 }

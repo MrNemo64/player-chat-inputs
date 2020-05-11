@@ -63,7 +63,7 @@ public final class BukkitChatInputBuilder<T> extends ChatInputBuilder<T, Player,
     @NotNull
     @Override
     public BukkitChatInput<T> build() {
-        return new BukkitChatInput<>(this.ciPlugin, this.sender, this.value, this.invalidInputMessage,
+        return new BukkitChatInput<>(this.plugin, this.sender, this.value, this.invalidInputMessage,
             this.sendValueMessage, this.isValidInput, this.setValue, this.onFinish, this.onCancel, this.cancel,
             this.onInvalidInput, this.repeat, this.onExpire, this.expire);
     }

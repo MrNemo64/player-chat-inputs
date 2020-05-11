@@ -63,7 +63,7 @@ public final class NukkitChatInputBuilder<T> extends ChatInputBuilder<T, Player,
     @NotNull
     @Override
     public NukkitChatInput<T> build() {
-        return new NukkitChatInput<>(this.ciPlugin, this.sender, this.value, this.invalidInputMessage,
+        return new NukkitChatInput<>(this.plugin, this.sender, this.value, this.invalidInputMessage,
             this.sendValueMessage, this.isValidInput, this.setValue, this.onFinish, this.onCancel, this.cancel,
             this.onInvalidInput, this.repeat, this.onExpire, this.expire);
     }

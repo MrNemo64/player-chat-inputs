@@ -24,36 +24,23 @@
 
 package io.github.nemo_64.chatinput.bukkit.impl;
 
-import java.util.HashSet;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.junit.jupiter.api.Assertions;
+import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class BkktChatEventTest {
+class BkktPluginTest {
 
-    private final Player player = Mockito.mock(Player.class);
+    private final Plugin plugin = Mockito.mock(Plugin.class);
 
-    private final AsyncPlayerChatEvent event =
-        new AsyncPlayerChatEvent(true, this.player, "Test message", new HashSet<>());
-
-    private final BkktChatEvent bkktChatEvent = new BkktChatEvent(this.event);
+    private final BkktPlugin bkktPlugin = new BkktPlugin(this.plugin);
 
     @Test
-    void testCancel() {
-        this.bkktChatEvent.cancel();
-        Assertions.assertTrue(this.event.isCancelled(), "The chat event couldn't be cancelled!");
+    void registerEvent() {
+        bkktPlugin.registerEvent();
     }
 
     @Test
-    void testMessage() {
-        Assertions.assertEquals("Test message", this.bkktChatEvent.message(), "The chat event's message is not the `Test message`!");
-    }
-
-    @Test
-    void testSender() {
-        Assertions.assertEquals(this.player, this.bkktChatEvent.sender().get(), "The chat event's sender is not the #player!");
+    void createRunTaskLater() {
     }
 
 }
