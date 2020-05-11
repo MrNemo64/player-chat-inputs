@@ -49,7 +49,7 @@ public final class NkktPluginTest {
 
     private final Player player = Mockito.mock(Player.class);
 
-    private final NkktPlugin bkktPlugin = new NkktPlugin(NkktPluginTest.plugin);
+    private final NkktPlugin nkktPlugin = new NkktPlugin(NkktPluginTest.plugin);
 
     private final NukkitChatInput<Integer> chatInput = NukkitChatInputBuilder.integer(NkktPluginTest.plugin, this.player)
         .build();
@@ -69,17 +69,17 @@ public final class NkktPluginTest {
             runnable.run();
             return null;
         }).when(NkktPluginTest.scheduler)
-            .scheduleDelayedTask(ArgumentMatchers.any(Plugin.class), ArgumentMatchers.any(Runnable.class), ArgumentMatchers.anyInt(), ArgumentMatchers.anyBoolean());
+            .scheduleDelayedTask(ArgumentMatchers.any(Plugin.class), ArgumentMatchers.any(Runnable.class), ArgumentMatchers.anyInt());
     }
 
     @Test
     void registerEvent() {
-        this.bkktPlugin.registerEvent(this.chatInput);
+        this.nkktPlugin.registerEvent(this.chatInput);
     }
 
     @Test
     void createRunTaskLater() {
-        this.bkktPlugin.createRunTaskLater(() -> this.isWorking = "working", 20L);
+        this.nkktPlugin.createRunTaskLater(() -> this.isWorking = "working", 20L);
         Assertions.assertEquals("working", this.isWorking, "Task couldn't run!");
     }
 
