@@ -25,13 +25,18 @@
 package io.github.nemo_64.chatinput.bukkit;
 
 import io.github.nemo_64.chatinput.Task;
+import java.util.HashSet;
 import java.util.UUID;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitTask;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -52,6 +57,13 @@ class BukkitChatInputTest {
 
     private final BukkitTask bukkitTask = Mockito.mock(BukkitTask.class);
 
+    @BeforeAll
+    static void prepare() {
+        new HandlerList();
+        Mockito.when(BukkitChatInputTest.PLAYER.getUniqueId())
+            .thenReturn(BukkitChatInputTest.PLAYER_UUID);
+    }
+
     @Test
     void createTask() {
         final Task<BukkitTask> task = BukkitChatInputTest.CHAT_INPUT.createTask(this.bukkitTask);
@@ -59,22 +71,25 @@ class BukkitChatInputTest {
 
     @Test
     void whenQuit() {
-        Mockito.when(BukkitChatInputTest.PLAYER.getUniqueId())
-            .thenReturn(BukkitChatInputTest.PLAYER_UUID);
         final PlayerQuitEvent event = new PlayerQuitEvent(BukkitChatInputTest.PLAYER, "Quit Message");
         BukkitChatInputTest.CHAT_INPUT.whenQuit(event);
     }
 
     @Test
     void whenChat() {
+        final AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, BukkitChatInputTest.PLAYER,
+            "Test message", new HashSet<>());
+        BukkitChatInputTest.CHAT_INPUT.whenChat(event);
     }
 
     @Test
     void get() {
+        Assertions.assertEquals(BukkitChatInputTest.CHAT_INPUT, BukkitChatInputTest.CHAT_INPUT.get(), "The get method in ChatInput not giving the correct object!");
     }
 
     @Test
     void unregisterListeners() {
+        BukkitChatInputTest.CHAT_INPUT.unregisterListeners();
     }
 
 }
