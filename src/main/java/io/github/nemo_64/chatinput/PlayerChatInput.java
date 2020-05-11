@@ -202,7 +202,7 @@ public final class PlayerChatInput<T> implements Listener {
     public void start() {
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         if (this.expire != -1L) {
-            this.expireTask = Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () ->
+            this.expireTask = Bukkit.getScheduler().runTaskLater(this.plugin, () ->
                 this.getExpireTask()
                     .filter(task -> !task.isCancelled())
                     .ifPresent(task -> this.onExpire.accept(this.player)), this.expire);
