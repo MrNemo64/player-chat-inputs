@@ -27,10 +27,10 @@ package io.github.nemo_64.chatinput.nukkit.impl;
 import cn.nukkit.event.Listener;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.TaskHandler;
-import io.github.nemo_64.chatinput.CiPlugin;
+import io.github.nemo_64.chatinput.ChatInputPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public final class NkktPlugin implements CiPlugin<TaskHandler, Listener> {
+public final class NkktPlugin implements ChatInputPlugin<TaskHandler, Listener> {
 
     @NotNull
     private final Plugin plugin;

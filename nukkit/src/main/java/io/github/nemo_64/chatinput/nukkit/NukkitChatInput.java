@@ -32,7 +32,7 @@ import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.TaskHandler;
-import io.github.nemo_64.chatinput.CiPlugin;
+import io.github.nemo_64.chatinput.ChatInputPlugin;
 import io.github.nemo_64.chatinput.PlayerChatInput;
 import io.github.nemo_64.chatinput.Task;
 import io.github.nemo_64.chatinput.nukkit.impl.*;
@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
 public final class NukkitChatInput<T> extends PlayerChatInput<T, Player, NkktSender, TaskHandler, NkktChatEvent,
     NkktQuitEvent, Listener> implements Listener {
 
-    public NukkitChatInput(@NotNull final CiPlugin<TaskHandler, Listener> ciPlugin,
+    public NukkitChatInput(@NotNull final ChatInputPlugin<TaskHandler, Listener> ciPlugin,
                            @NotNull final NkktSender sender, @Nullable final T startOn,
                            @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
                            @NotNull final BiFunction<NkktSender, String, Boolean> isValidInput,

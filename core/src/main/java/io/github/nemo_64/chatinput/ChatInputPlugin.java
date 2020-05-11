@@ -26,7 +26,7 @@ package io.github.nemo_64.chatinput;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface CiPlugin<T, L> {
+public interface ChatInputPlugin<T, L> {
 
     void registerEvent(@NotNull L event);
 

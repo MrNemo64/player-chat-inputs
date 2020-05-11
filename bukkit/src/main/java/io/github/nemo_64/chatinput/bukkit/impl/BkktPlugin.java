@@ -24,13 +24,13 @@
 
 package io.github.nemo_64.chatinput.bukkit.impl;
 
-import io.github.nemo_64.chatinput.CiPlugin;
+import io.github.nemo_64.chatinput.ChatInputPlugin;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
-public final class BkktPlugin implements CiPlugin<BukkitTask, Listener> {
+public final class BkktPlugin implements ChatInputPlugin<BukkitTask, Listener> {
 
     @NotNull
     private final Plugin plugin;

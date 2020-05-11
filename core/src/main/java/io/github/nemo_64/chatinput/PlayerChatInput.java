@@ -75,7 +75,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
     protected final String cancel;
 
     @NotNull
-    protected final CiPlugin<X, L> ciPlugin;
+    protected final ChatInputPlugin<X, L> ciPlugin;
 
     protected final boolean repeat;
 
@@ -103,7 +103,7 @@ public abstract class PlayerChatInput<T, P, S extends Sender<P>, X, A extends Ch
      * @param cancel The string that the sender has to send to cancel the process
      * @param onInvalidInput Called when the input is invalid
      */
-    protected PlayerChatInput(@NotNull final CiPlugin<X, L> ciPlugin, @NotNull final S sender, @Nullable final T startOn,
+    protected PlayerChatInput(@NotNull final ChatInputPlugin<X, L> ciPlugin, @NotNull final S sender, @Nullable final T startOn,
                               @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
                               @NotNull final BiFunction<S, String, Boolean> isValidInput,
                               @NotNull final BiFunction<S, String, T> setValue,

@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ChatInputBuilder<T, P, S extends Sender<P>, X, L> {
 
     @NotNull
-    protected final CiPlugin<X, L> ciPlugin;
+    protected final ChatInputPlugin<X, L> ciPlugin;
 
     @NotNull
     protected final S sender;
@@ -75,7 +75,7 @@ public abstract class ChatInputBuilder<T, P, S extends Sender<P>, X, L> {
     @Nullable
     protected T value;
 
-    public ChatInputBuilder(@NotNull final CiPlugin<X, L> ciPlugin, @NotNull final S sender) {
+    public ChatInputBuilder(@NotNull final ChatInputPlugin<X, L> ciPlugin, @NotNull final S sender) {
         this.ciPlugin = ciPlugin;
         this.sender = sender;
     }

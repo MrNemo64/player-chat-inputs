@@ -24,7 +24,7 @@
 
 package io.github.nemo_64.chatinput.bukkit;
 
-import io.github.nemo_64.chatinput.CiPlugin;
+import io.github.nemo_64.chatinput.ChatInputPlugin;
 import io.github.nemo_64.chatinput.PlayerChatInput;
 import io.github.nemo_64.chatinput.Task;
 import io.github.nemo_64.chatinput.bukkit.impl.*;
@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
 public final class BukkitChatInput<T> extends PlayerChatInput<T, Player, BkktSender, BukkitTask, BkktChatEvent,
     BkktQuitEvent, Listener> implements Listener {
 
-    public BukkitChatInput(@NotNull final CiPlugin<BukkitTask, Listener> ciPlugin,
+    public BukkitChatInput(@NotNull final ChatInputPlugin<BukkitTask, Listener> ciPlugin,
                            @NotNull final BkktSender sender, @Nullable final T startOn,
                            @Nullable final String invalidInputMessage, @Nullable final String sendValueMessage,
                            @NotNull final BiFunction<BkktSender, String, Boolean> isValidInput,
