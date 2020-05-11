@@ -35,7 +35,7 @@ public class TestCommand implements CommandExecutor {
     
         // This comand will ask for a number n and will send to the player n! so we will
         // work with integers
-        PlayerChatInput<Integer> chatInput = new PlayerChatInputBuilder<Integer>(plugin, player);
+        PlayerChatInput<Integer> chatInput = new PlayerChatInputBuilder<Integer>(plugin, player)
             .isValidInput((p, str) -> { // Set the validation
                 try {
                     int val = Integer.valueOf(str);
