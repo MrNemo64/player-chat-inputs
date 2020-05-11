@@ -40,7 +40,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class BukkitChatInputTest {
+final class BukkitChatInputTest {
 
     public static final UUID PLAYER_UUID = UUID.randomUUID();
 

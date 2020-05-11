@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class BkktChatEventTest {
+final class BkktChatEventTest {
 
     private final Player player = Mockito.mock(Player.class);
 
