@@ -37,7 +37,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Nemo_64
  * @version 1.1
  */
-public final class PlayerChatInput<T> implements Listener {
+public final class PlayerChatInput<T> implements Listener, ChatInput<T> {
 
     @NotNull
     private final BiFunction<Player, String, Boolean> onInvalidInput;
@@ -89,7 +88,7 @@ public final class PlayerChatInput<T> implements Listener {
     private final long expire;
 
     @Nullable
-    private BukkitTask expireTask;
+    private Task expireTask;
 
     @Nullable
     private T value;
@@ -191,7 +190,7 @@ public final class PlayerChatInput<T> implements Listener {
      * @return The value
      */
     @NotNull
-    @SuppressWarnings("unused")
+    @Override
     public Optional<T> getValue() {
         return Optional.ofNullable(this.value);
     }
@@ -199,30 +198,21 @@ public final class PlayerChatInput<T> implements Listener {
     /**
      * When this method is called the input will be asked to the player
      */
-    @SuppressWarnings("unused")
+    @Override
     public void start() {
         this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         if (this.expire != -1L) {
-            this.expireTask = this.player.getServer().getScheduler().runTaskLater(this.plugin, () ->
-                this.getExpireTask()
-                    .filter(task -> !task.isCancelled())
-                    .ifPresent(task -> {
-                        this.onExpire.accept(this.player);
-                        this.unregister();
-                    }), this.expire);
+            this.expireTask = new CiBukkitTask(
+                this.player.getServer().getScheduler().runTaskLater(this.plugin, () ->
+                    this.getExpireTask()
+                        .filter(task -> !task.isCancelled())
+                        .ifPresent(task -> {
+                            this.onExpire.accept(this.player);
+                            this.unregister();
+                        }), this.expire));
         }
         this.getSendValueMessage()
             .ifPresent(this.player::sendMessage);
-    }
-
-    @NotNull
-    public Optional<String> getInvalidInputMessage() {
-        return Optional.ofNullable(this.invalidInputMessage);
-    }
-
-    @NotNull
-    public Optional<String> getSendValueMessage() {
-        return Optional.ofNullable(this.sendValueMessage);
     }
 
     /**
@@ -231,14 +221,28 @@ public final class PlayerChatInput<T> implements Listener {
      * Only use if necessary. The class unregisters itself when it has finished/the
      * player leaves
      */
+    @Override
     public void unregister() {
         HandlerList.unregisterAll(this);
-        this.getExpireTask().ifPresent(BukkitTask::cancel);
+        this.getExpireTask().ifPresent(Task::cancel);
     }
 
     @NotNull
-    private Optional<BukkitTask> getExpireTask() {
+    @Override
+    public Optional<Task> getExpireTask() {
         return Optional.ofNullable(this.expireTask);
+    }
+
+    @NotNull
+    @Override
+    public Optional<String> getInvalidInputMessage() {
+        return Optional.ofNullable(this.invalidInputMessage);
+    }
+
+    @NotNull
+    @Override
+    public Optional<String> getSendValueMessage() {
+        return Optional.ofNullable(this.sendValueMessage);
     }
 
     /**
@@ -302,14 +306,12 @@ public final class PlayerChatInput<T> implements Listener {
         }
 
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> expire(final long expire) {
             this.expire = expire;
             return this;
         }
 
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> onExpire(@NotNull final Consumer<Player> onExpire) {
             this.onExpire = onExpire;
             return this;
@@ -325,7 +327,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> onInvalidInput(
             @NotNull final BiFunction<Player, String, Boolean> onInvalidInput) {
             this.onInvalidInput = onInvalidInput;
@@ -350,7 +351,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> isValidInput(
             @NotNull final BiFunction<Player, String, Boolean> isValidInput) {
             this.isValidInput = isValidInput;
@@ -368,7 +368,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> setValue(
             @NotNull final BiFunction<Player, String, U> setValue) {
             this.setValue = setValue;
@@ -384,7 +383,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> onFinish(@NotNull final BiConsumer<Player, U> onFinish) {
             this.onFinish = onFinish;
             return this;
@@ -400,7 +398,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> onCancel(@NotNull final Consumer<Player> onCancel) {
             this.onCancel = onCancel;
             return this;
@@ -413,7 +410,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> invalidInputMessage(@Nullable final String message) {
             this.invalidInputMessage = message;
             return this;
@@ -426,7 +422,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> sendValueMessage(@Nullable final String message) {
             this.sendValueMessage = message;
             return this;
@@ -440,7 +435,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> toCancel(@NotNull final String cancel) {
             this.cancel = cancel;
             return this;
@@ -453,7 +447,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> defaultValue(@Nullable final U def) {
             this.value = def;
             return this;
@@ -471,7 +464,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return the builder.
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput.PlayerChatInputBuilder<U> repeat(final boolean repeat) {
             this.repeat = repeat;
             return this;
@@ -483,7 +475,6 @@ public final class PlayerChatInput<T> implements Listener {
          * @return A new {@link PlayerChatInput}
          */
         @NotNull
-        @SuppressWarnings("unused")
         public PlayerChatInput<U> build() {
             return new PlayerChatInput<>(this.main, this.player, this.value, this.invalidInputMessage,
                 this.sendValueMessage, this.isValidInput, this.setValue, this.onFinish, this.onCancel, this.cancel,
