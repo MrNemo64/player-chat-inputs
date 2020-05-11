@@ -38,19 +38,22 @@ public class BkktChatEventTest {
     private final AsyncPlayerChatEvent event =
         new AsyncPlayerChatEvent(true, this.player, "Test message", new HashSet<>());
 
+    private final BkktChatEvent bkktChatEvent = new BkktChatEvent(this.event);
+
     @Test
     public void testCancel() {
-        final BkktChatEvent bkktChatEvent = new BkktChatEvent(this.event);
-        bkktChatEvent.cancel();
+        this.bkktChatEvent.cancel();
         Assertions.assertTrue(this.event.isCancelled(), "The chat event couldn't be cancelled!");
     }
 
     @Test
     public void testMessage() {
+        Assertions.assertEquals("Test message", this.bkktChatEvent.message(), "The chat event's message is not the `Test message`!");
     }
 
     @Test
     public void testSender() {
+        Assertions.assertEquals(this.player, this.bkktChatEvent.sender().get(), "The chat event's sender is not the #player!");
     }
 
 }
