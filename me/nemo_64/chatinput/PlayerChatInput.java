@@ -22,16 +22,22 @@
  * SOFTWARE.
  */
 
-package me.nemo_64.chatinput;
+package me.nemo_64.playerinputs;
 
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -39,351 +45,595 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  * Class created to get inputs from players without using the
  * {@link org.bukkit.conversations.Conversation Conversation} api
  * 
  * @author Nemo_64
- * @version 1.1
+ * @version 1.2
  * @param <T>
  *            The input type. Ex: String, Integer, Boolean
  */
 public class PlayerChatInput<T> implements Listener {
 
-  private BiFunction<Player, String, Boolean> onInvalidInput;
-  private BiFunction<Player, String, Boolean> isValidInput;
-  private BiFunction<Player, String, T> setValue;
-  private BiConsumer<Player, T> onFinish;
-  private Consumer<Player> onCancel;
-  private Player player;
+	private EnumMap<EndReason, PlayerChatInput<?>> chainAfter;
+	private BiFunction<Player, String, Boolean> onInvalidInput;
+	private BiFunction<Player, String, Boolean> isValidInput;
+	private BiFunction<Player, String, T> setValue;
+	private BiConsumer<Player, T> onFinish;
+	private Consumer<Player> onCancel;
+	private Consumer<Player> onExpire;
+	private Runnable onDisconnect;
+	private Player player;
 
-  private String invalidInputMessgae;
-  private String sendValueMessage;
-  private String cancel;
+	private String invalidInputMessgae;
+	private String sendValueMessage;
+	private String onExpireMessage;
+	private String cancel;
 
-  private Plugin main;
+	private Plugin main;
 
-  private boolean repeat;
+	private int expiresAfter;
+	private boolean started;
+	private boolean repeat;
 
-  private T value;
+	private T value;
 
-  /**
-   * @param plugin
-   *            The main class of the plugin
-   * @param player
-   *            The player that is going to input the value
-   * @param startOn
-   *            The start value
-   * @param invalidInputMessgae
-   *            Message that will be sent to the player if the input is invalid
-   * @param sendValueMessage
-   *            Message that will be sent to the player to ask for the input
-   * @param isValidInput
-   *            Checks if the player input is valid
-   * @param setValue
-   *            Used to set the value.<br>
-   *            Since we can't know to what transform the string that the player
-   *            sends, it must be converted to the value latter
-   * @param onFinish
-   *            Called when the player inputs a valid string
-   * @param onCancel
-   *            Called when the player cancells
-   * @param cancel
-   *            The string that the player has to send to cancel the process
-   * @param onInvalidInput
-   *            Called when the input is invalid
-   */
-  public PlayerChatInput(@Nonnull Plugin plugin, @Nonnull Player player, @Nullable T startOn,
-      @Nullable String invalidInputMessgae, @Nullable String sendValueMessage,
-      @Nonnull BiFunction<Player, String, Boolean> isValidInput, @Nonnull BiFunction<Player, String, T> setValue,
-      @Nonnull BiConsumer<Player, T> onFinish, @Nonnull Consumer<Player> onCancel, @Nonnull String cancel,
-      @Nonnull BiFunction<Player, String, Boolean> onInvalidInput, boolean repeat) {
-    Objects.requireNonNull(plugin, "main can't be null");
-    Objects.requireNonNull(player, "player can't be null");
-    Objects.requireNonNull(invalidInputMessgae, "isValidInput can't be null");
-    Objects.requireNonNull(sendValueMessage, "isValidInput can't be null");
-    Objects.requireNonNull(isValidInput, "isValidInput can't be null");
-    Objects.requireNonNull(setValue, "setValue can't be null");
-    Objects.requireNonNull(onFinish, "onFinish can't be null");
-    Objects.requireNonNull(onFinish, "onCancel can't be null");
-    Objects.requireNonNull(onInvalidInput, "onInvalidInput can't be null");
-    Objects.requireNonNull(cancel, "cancel can't be null");
-    this.main = plugin;
-    this.player = player;
-    this.invalidInputMessgae = invalidInputMessgae;
-    this.sendValueMessage = sendValueMessage;
-    this.isValidInput = isValidInput;
-    this.setValue = setValue;
-    this.onFinish = onFinish;
-    this.onCancel = onCancel;
-    this.cancel = cancel == null ? "cancel" : cancel;
-    this.onInvalidInput = onInvalidInput;
-    this.value = startOn;
-    this.repeat = repeat;
-  }
+	private BukkitTask task;
 
-  @EventHandler
-  public void onPlayerChatEvent(AsyncPlayerChatEvent e) {
-    if (!player.getUniqueId().equals(e.getPlayer().getUniqueId()))
-      return;
-    e.setCancelled(true);
-    if (e.getMessage().equalsIgnoreCase(cancel)) {
-      onCancel.accept(player);
-      unregister();
-      return;
-    }
-    if (isValidInput.apply(player, e.getMessage())) {
-      value = setValue.apply(player, e.getMessage());
-      onFinish.accept(player, value);
-      unregister();
-    } else {
-      if (onInvalidInput.apply(player, e.getMessage())) {
-        if (invalidInputMessgae != null)
-          player.sendMessage(invalidInputMessgae);
-        if (sendValueMessage != null && repeat)
-          player.sendMessage(sendValueMessage);
-      }
-      if (!repeat)
-        unregister();
-      return;
-    }
-  }
+	private EndReason end;
 
-  @EventHandler
-  public void onPlayerDisconnect(PlayerQuitEvent e) {
-    if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-      onCancel.accept(player);
-      unregister();
-    }
-  }
+	/**
+	 * @param plugin
+	 *            The main class of the plugin
+	 * @param player
+	 *            The player that is going to input the value
+	 * @param startOn
+	 *            The start value
+	 * @param invalidInputMessgae
+	 *            Message that will be sent to the player if the input is invalid
+	 * @param sendValueMessage
+	 *            Message that will be sent to the player to ask for the input
+	 * @param isValidInput
+	 *            Checks if the player input is valid
+	 * @param setValue
+	 *            Used to set the value.<br>
+	 *            Since we can't know to what transform the string that the player
+	 *            sends, it must be converted to the value latter
+	 * @param onFinish
+	 *            Called when the player inputs a valid string
+	 * @param onCancel
+	 *            Called when the player cancells
+	 * @param cancel
+	 *            The string that the player has to send to cancel the process
+	 * @param onInvalidInput
+	 *            Called when the input is invalid
+	 * @param repeat
+	 *            If true and the input is invalid, another input will be expected
+	 * @param chainAfter
+	 *            When the live cicle ends depending on the end another
+	 *            PlayerChatInput will be ejecuted
+	 * @param expiresAfter
+	 *            Ticks that the player has to answer. -1 for not having a limited
+	 *            time. (20ticks = 1sec)
+	 * @param onExpire
+	 *            Code to run if the player runs out of time
+	 * @param whenExpireMessage
+	 *            Message to send to the player if he runs out of time. If null, the
+	 *            message won't be sent
+	 * @param onDisconnect
+	 *            Code to be runned if the player disconnects
+	 */
+	public PlayerChatInput(@Nonnull Plugin plugin, @Nonnull Player player, @Nullable T startOn,
+			@Nullable String invalidInputMessgae, @Nullable String sendValueMessage,
+			@Nonnull BiFunction<Player, String, Boolean> isValidInput, @Nonnull BiFunction<Player, String, T> setValue,
+			@Nonnull BiConsumer<Player, T> onFinish, @Nonnull Consumer<Player> onCancel, @Nonnull String cancel,
+			@Nonnull BiFunction<Player, String, Boolean> onInvalidInput, boolean repeat,
+			@Nullable EnumMap<EndReason, PlayerChatInput<?>> chainAfter, int expiresAfter,
+			@Nonnull Consumer<Player> onExpire, @Nullable String whenExpireMessage, @Nonnull Runnable onDisconnect) {
+		Objects.requireNonNull(plugin, "main can't be null");
+		Objects.requireNonNull(player, "player can't be null");
+		Objects.requireNonNull(invalidInputMessgae, "isValidInput can't be null");
+		Objects.requireNonNull(sendValueMessage, "isValidInput can't be null");
+		Objects.requireNonNull(isValidInput, "isValidInput can't be null");
+		Objects.requireNonNull(setValue, "setValue can't be null");
+		Objects.requireNonNull(onFinish, "onFinish can't be null");
+		Objects.requireNonNull(onFinish, "onCancel can't be null");
+		Objects.requireNonNull(onInvalidInput, "onInvalidInput can't be null");
+		Objects.requireNonNull(cancel, "cancel can't be null");
+		Objects.requireNonNull(onExpire, "onExpire can't be null");
+		Objects.requireNonNull(onDisconnect, "onDisconnect can't be null");
+		this.main = plugin;
+		this.player = player;
+		this.invalidInputMessgae = invalidInputMessgae;
+		this.sendValueMessage = sendValueMessage;
+		this.isValidInput = isValidInput;
+		this.setValue = setValue;
+		this.onFinish = onFinish;
+		this.onCancel = onCancel;
+		this.cancel = cancel == null ? "cancel" : cancel;
+		this.onInvalidInput = onInvalidInput;
+		this.value = startOn;
+		this.repeat = repeat;
+		this.chainAfter = chainAfter;
+		this.expiresAfter = expiresAfter;
+		this.onExpire = onExpire;
+		this.onExpireMessage = whenExpireMessage;
+		this.onDisconnect = onDisconnect;
+	}
 
-  @Nullable
-  /**
-   * Gets the value that the player has inputed or the default value
-   * 
-   * @return The value
-   */
-  public T getValue() {
-    return value;
-  }
+	@EventHandler
+	public void onPlayerChatEvent(AsyncPlayerChatEvent e) {
+		if (!player.getUniqueId().equals(e.getPlayer().getUniqueId()))
+			return;
+		if (!isStarted()) // We have already ended
+			return;
+		e.setCancelled(true);
+		Bukkit.getScheduler().runTask(main, () -> runEventOnMainThread(e.getMessage())); // Jump to main thread
+	}
 
-  /**
-   * When this method is called the input will be asked to the player
-   */
-  public void start() {
-    main.getServer().getPluginManager().registerEvents(this, this.main);
-    if (sendValueMessage != null)
-      player.sendMessage(sendValueMessage);
-  }
+	private void runEventOnMainThread(String message) {
+		if (message.equalsIgnoreCase(cancel)) { // Player cancells input
+			onCancel.accept(player);
+			end(EndReason.PLAYER_CANCELLS);
+			return;
+		}
+		if (isValidInput.apply(player, message)) { // Is a valid input?
+			value = setValue.apply(player, message); // Transform the value
+			onFinish.accept(player, value); // Ron onFinish
+			end(EndReason.FINISH);
+		} else {
+			if (onInvalidInput.apply(player, message)) {
+				if (invalidInputMessgae != null)
+					player.sendMessage(invalidInputMessgae);
+				if (sendValueMessage != null && repeat)
+					player.sendMessage(sendValueMessage);
+			}
+			if (!repeat) { // We only acepted anwers 1
+				onExpire.accept(player);
+				end(EndReason.INVALID_INPUT);
+			}
+		}
+	}
 
-  /**
-   * When this method is called all the events in this input handler are
-   * unregistered<br>
-   * Only use if necesary. The class unregisters itself when it has finished/the
-   * player leaves
-   */
-  public void unregister() {
-    HandlerList.unregisterAll(this);
-  }
+	@EventHandler
+	public void onPlayerDisconnect(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			if (!isStarted())// We have already ended
+				return;
+			onDisconnect.run();
+			end(EndReason.PLAYER_DISCONECTS);
+		}
+	}
 
-  /**
-   * Builder for the {@link PlayerChatInput} class
-   * 
-   * @author Nemo_64
-   *
-   * @param <U>
-   *            The {@link PlayerChatInput} type
-   */
-  public static class PlayerChatInputBuilder<U> {
+	@Nullable
+	/**
+	 * Gets the value that the player has inputed or the default value
+	 * 
+	 * @return The value
+	 */
+	public T getValue() {
+		return value;
+	}
 
-    private BiFunction<Player, String, Boolean> onInvalidInput;
-    private BiFunction<Player, String, Boolean> isValidInput;
-    private BiFunction<Player, String, U> setValue;
-    private BiConsumer<Player, U> onFinish;
-    private Consumer<Player> onCancel;
-    private Player player;
+	@Nullable
+	/**
+	 * Gets the reason why this playerchatinput has finished
+	 * 
+	 * @return Null if it hasn't finish yet
+	 */
+	public EndReason getEndReason() {
+		return end;
+	}
 
-    private String invalidInputMessage;
-    private String sendValueMessage;
-    private String cancel;
+	/**
+	 * When this method is called the input will be asked to the player
+	 */
+	public void start() {
+		// The player can only be in one active PlayerChatInput at a time
+		if (isInputing(player.getUniqueId()))
+			throw new IllegalAccessError("Can't ask for input to a player that is already inputing");
+		addPlayer(player.getUniqueId());
 
-    private U value;
+		// Start the listener
+		main.getServer().getPluginManager().registerEvents(this, this.main);
 
-    private boolean repeat;
+		// There is a limit of time
+		if (expiresAfter > 0)
+			task = Bukkit.getScheduler().runTaskLater(main, () -> {
+				if (!isStarted()) // We have ended somewhere else
+					return;
+				onExpire.accept(player);
+				if (onExpireMessage != null)
+					player.sendMessage(onExpireMessage);
+				end(EndReason.RUN_OUT_OF_TIME);
+			}, expiresAfter);
+		if (sendValueMessage != null)
+			player.sendMessage(sendValueMessage);
+		started = true;
+		end = null;
+	}
 
-    private Plugin main;
+	/**
+	 * When this method is called all the events in this input handler are
+	 * unregistered<br>
+	 * Only use if necesary. The class unregisters itself when it has finished/the
+	 * player leaves
+	 */
+	public void unregister() {
+		// Maybe the timer is still running
+		if (task != null)
+			task.cancel();
+		// The player can be asked for an input again
+		removePlayer(player.getUniqueId());
+		// Unregister events
+		HandlerList.unregisterAll(this);
+	}
 
-    /**
-     * @param main
-     *            The main class of the plugin
-     * @param player
-     *            The player that will send the input
-     */
-    public PlayerChatInputBuilder(@Nonnull Plugin main, @Nonnull Player player) {
-      this.main = main;
-      this.player = player;
+	/**
+	 * Unregisters events and starts the chain if there is a chain
+	 * 
+	 * @param The
+	 *            reason why the input-porces has endedu
+	 */
+	public void end(EndReason reason) {
+		started = false;
+		end = reason;
+		unregister();
+		// There is something to chain
+		if (chainAfter != null)
+			// There is something to chain with out end
+			if (chainAfter.get(end) != null)
+				// Start the new input
+				chainAfter.get(end).start();
+	}
 
-      invalidInputMessage = "That is not a valid input";
-      sendValueMessage = "Send in the chat the value";
-      cancel = "cancel";
+	/**
+	 * Checks if waiting for an input
+	 */
+	public boolean isStarted() {
+		return started;
+	}
 
-      onInvalidInput = (p, mes) -> {
-        return true;
-      };
-      isValidInput = (p, mes) -> {
-        return true;
-      };
-      setValue = (p, mes) -> {
-        return value;
-      };
-      onFinish = (p, val) -> {};
-      onCancel = (p) -> {};
+	/*
+	 * STATIC START
+	 */
+	private static List<UUID> players = new ArrayList<UUID>();
 
-      repeat = true;
-    }
+	private static void addPlayer(UUID player) {
+		players.add(player);
+	}
 
-    /**
-     * Sets the code that will be ejecuted if the player send an invalid input
-     * 
-     * @param onInvalidInput
-     *            A {@link java.util.function.BiFunction BiFunction} with the code
-     *            to be ejecuted <br>
-     *            If this returns true, the message setted with the
-     *            {@link #invalidInputMessage(String)} will be sent to the player
-     * 
-     */
-    public PlayerChatInputBuilder<U> onInvalidInput(@Nonnull BiFunction<Player, String, Boolean> onInvalidInput) {
-      this.onInvalidInput = onInvalidInput;
-      return this;
-    }
+	private static void removePlayer(UUID player) {
+		players.remove(player);
+	}
 
-    /**
-     * Checks if the given input is valid
-     * 
-     * @param isValidInput
-     *            A {@link java.util.function.BiFunction BiFunction} with the code
-     *            to be ejecuted <br>
-     *            This code must check if the value that the player has inputted is
-     *            vaid. For example<br>
-     *            {@code try { Integer.valueOf(str); return true; } catch (Exception
-     *            e) { return false; } <br>
-     *            Will check if the input is an integer
-     */
-    public PlayerChatInputBuilder<U> isValidInput(@Nonnull BiFunction<Player, String, Boolean> isValidInput) {
-      this.isValidInput = isValidInput;
-      return this;
-    }
+	/**
+	 * Checks if a player is in an input-proces
+	 */
+	public static boolean isInputing(UUID player) {
+		return players.contains(player);
+	}
 
-    /**
-     * Sets the value. Since the {@link PlayerChatInput} is a generic class, it
-     * doesn't know how to convert the<br>
-     * string input to the correct variable type. Because of this, we must provide
-     * the code to do the cast
-     * 
-     * @param setValue
-     *            A {@link java.util.function.BiFunction BiFunction} with the code
-     *            to be ejecuted to cast the string input to the correct type
-     */
-    public PlayerChatInputBuilder<U> setValue(@Nonnull BiFunction<Player, String, U> setValue) {
-      this.setValue = setValue;
-      return this;
-    }
+	/*
+	 * STATIC END
+	 */
 
-    /**
-     * Code to be ejecuted when the player inputs a valid string and the casting is
-     * succesfull
-     * 
-     * @param onFinish
-     *            A {@link java.util.function.BiFunction BiFunction} with the code
-     *            to be ejecuted when the player inputs a valid string
-     */
-    public PlayerChatInputBuilder<U> onFinish(@Nonnull BiConsumer<Player, U> onFinish) {
-      this.onFinish = onFinish;
-      return this;
-    }
+	/**
+	 * Builder for the {@link PlayerChatInput} class
+	 * 
+	 * @author Nemo_64
+	 * @version 1.2
+	 * @param <U>
+	 *            The {@link PlayerChatInput} type
+	 */
+	public static class PlayerChatInputBuilder<U> {
 
-    /**
-     * Code to be ejecuted when the player sends as input what has been previously
-     * set<br>
-     * with the {@toCancel(String)} method
-     * 
-     * @param onCancel
-     *            A {@link java.util.function.BiFunction BiFunction} with the code
-     *            to be ejecuted when the player cancells the input operation
-     */
-    public PlayerChatInputBuilder<U> onCancel(@Nonnull Consumer<Player> onCancel) {
-      this.onCancel = onCancel;
-      return this;
-    }
+		private EnumMap<EndReason, PlayerChatInput<?>> chainAfter;
+		private BiFunction<Player, String, Boolean> onInvalidInput;
+		private BiFunction<Player, String, Boolean> isValidInput;
+		private BiFunction<Player, String, U> setValue;
+		private BiConsumer<Player, U> onFinish;
+		private Consumer<Player> onCancel;
+		private Consumer<Player> onExpire;
+		private Runnable onDisconnect;
+		private Player player;
 
-    /**
-     * Message to be sent to the player when the input is invalid
-     * 
-     * @param invalidInputMessage
-     *            The message
-     */
-    public PlayerChatInputBuilder<U> invalidInputMessage(@Nullable String invalidInputMessage) {
-      this.invalidInputMessage = invalidInputMessage;
-      return this;
-    }
+		private String invalidInputMessage;
+		private String sendValueMessage;
+		private String whenExpire;
+		private String cancel;
 
-    /**
-     * Message to be sent to the player when asking for the input
-     * 
-     * @param sendValueMessage
-     *            The message
-     */
-    public PlayerChatInputBuilder<U> sendValueMessage(@Nullable String sendValueMessage) {
-      this.sendValueMessage = sendValueMessage;
-      return this;
-    }
+		private U value;
 
-    /**
-     * Message that the player must sent to cancel<br>
-     * By default is "cancel"
-     * 
-     * @param cancel
-     *            The message
-     */
-    public PlayerChatInputBuilder<U> toCancel(@Nonnull String cancel) {
-      this.cancel = cancel;
-      return this;
-    }
+		private int expiresAfter;
+		private boolean repeat;
 
-    /**
-     * Sets the default value
-     * 
-     * @param def
-     *            The default value
-     */
-    public PlayerChatInputBuilder<U> defaultValue(@Nullable U def) {
-      this.value = def;
-      return this;
-    }
+		private Plugin main;
 
-    /**
-     * If true and the player sends an invalid input,
-     * {@link #onInvalidInput(BiFunction)} will run and another inputs will be
-     * asked.<br>
-     * If false and the player sends an invalid input,
-     * {@link #onInvalidInput(BiFunction)} will run and no more inputs will be
-     * expected.
-     */
-    public PlayerChatInputBuilder<U> repeat(boolean repeat) {
-      this.repeat = repeat;
-      return this;
-    }
+		/**
+		 * @param main
+		 *            The main class of the plugin
+		 * @param player
+		 *            The player that will send the input
+		 */
+		public PlayerChatInputBuilder(@Nonnull Plugin main, @Nonnull Player player) {
+			this.main = main;
+			this.player = player;
 
-    /**
-     * Creates the {@link PlayerChatInput}
-     * 
-     * @return A new {@link PlayerChatInput}
-     */
-    public PlayerChatInput<U> build() {
-      return new PlayerChatInput<U>(main, player, value, invalidInputMessage, sendValueMessage, isValidInput,
-          setValue, onFinish, onCancel, cancel, onInvalidInput, repeat);
-    }
-  }
+			invalidInputMessage = "That is not a valid input";
+			sendValueMessage = "Send in the chat the value";
+			whenExpire = "You ran out of time to answer";
+			cancel = "cancel";
+
+			onInvalidInput = (p, mes) -> {
+				return true;
+			};
+			isValidInput = (p, mes) -> {
+				return true;
+			};
+			setValue = (p, mes) -> {
+				return value;
+			};
+			onFinish = (p, val) -> {};
+			onCancel = (p) -> {};
+			onExpire = (p) -> {};
+			onDisconnect = () -> {};
+
+			expiresAfter = -1;
+
+			repeat = true;
+		}
+
+		/**
+		 * Sets the code that will be ejecuted if the player send an invalid input
+		 * 
+		 * @param onInvalidInput
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted <br>
+		 *            If this returns true, the message setted with the
+		 *            {@link #invalidInputMessage(String)} will be sent to the player
+		 * 
+		 */
+		public PlayerChatInputBuilder<U> onInvalidInput(@Nonnull BiFunction<Player, String, Boolean> onInvalidInput) {
+			this.onInvalidInput = onInvalidInput;
+			return this;
+		}
+
+		/**
+		 * Checks if the given input is valid
+		 * 
+		 * @param isValidInput
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted <br>
+		 *            This code must check if the value that the player has inputted is
+		 *            vaid. For example<br>
+		 *            {@code try { Integer.valueOf(str); return true; } catch (Exception
+		 *            e) { return false; } <br>
+		 *            Will check if the input is an integer
+		 */
+		public PlayerChatInputBuilder<U> isValidInput(@Nonnull BiFunction<Player, String, Boolean> isValidInput) {
+			this.isValidInput = isValidInput;
+			return this;
+		}
+
+		/**
+		 * Sets the value. Since the {@link PlayerChatInput} is a generic class, it
+		 * doesn't know how to convert the<br>
+		 * string input to the correct variable type. Because of this, we must provide
+		 * the code to do the cast
+		 * 
+		 * @param setValue
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted to cast the string input to the correct type
+		 */
+		public PlayerChatInputBuilder<U> setValue(@Nonnull BiFunction<Player, String, U> setValue) {
+			this.setValue = setValue;
+			return this;
+		}
+
+		/**
+		 * Code to be ejecuted when the player inputs a valid string and the casting is
+		 * succesfull
+		 * 
+		 * @param onFinish
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted when the player inputs a valid string
+		 */
+		public PlayerChatInputBuilder<U> onFinish(@Nonnull BiConsumer<Player, U> onFinish) {
+			this.onFinish = onFinish;
+			return this;
+		}
+
+		/**
+		 * Code to be ejecuted when the player sends as input what has been previously
+		 * set<br>
+		 * with the {@toCancel(String)} method
+		 * 
+		 * @param onCancel
+		 *            A {@link java.util.function.BiFunction BiFunction} with the code
+		 *            to be ejecuted when the player cancells the input operation
+		 */
+		public PlayerChatInputBuilder<U> onCancel(@Nonnull Consumer<Player> onCancel) {
+			this.onCancel = onCancel;
+			return this;
+		}
+
+		/**
+		 * Message to be sent to the player when the input is invalid
+		 * 
+		 * @param invalidInputMessage
+		 *            The message
+		 */
+		public PlayerChatInputBuilder<U> invalidInputMessage(@Nullable String invalidInputMessage) {
+			this.invalidInputMessage = invalidInputMessage;
+			return this;
+		}
+
+		/**
+		 * Message to be sent to the player when asking for the input
+		 * 
+		 * @param sendValueMessage
+		 *            The message
+		 */
+		public PlayerChatInputBuilder<U> sendValueMessage(@Nullable String sendValueMessage) {
+			this.sendValueMessage = sendValueMessage;
+			return this;
+		}
+
+		/**
+		 * Message that the player must sent to cancel<br>
+		 * By default is "cancel"
+		 * 
+		 * @param cancel
+		 *            The message
+		 */
+		public PlayerChatInputBuilder<U> toCancel(@Nonnull String cancel) {
+			this.cancel = cancel;
+			return this;
+		}
+
+		/**
+		 * Sets the default value
+		 * 
+		 * @param def
+		 *            The default value
+		 */
+		public PlayerChatInputBuilder<U> defaultValue(@Nullable U def) {
+			this.value = def;
+			return this;
+		}
+
+		/**
+		 * If true and the player sends an invalid input,
+		 * {@link #onInvalidInput(BiFunction)} will run and another inputs will be
+		 * asked.<br>
+		 * If false and the player sends an invalid input,
+		 * {@link #onInvalidInput(BiFunction)} will run and no more inputs will be
+		 * expected.
+		 */
+		public PlayerChatInputBuilder<U> repeat(boolean repeat) {
+			this.repeat = repeat;
+			return this;
+		}
+
+		/**
+		 * When this PlayerChatInput ends, depending on the end the specified <br>
+		 * new event will be runed.<br>
+		 * <br>
+		 * 
+		 * PlayerChatInput<String> a = ...<br>
+		 * PlayerChatInput<Integer> b = ...<br>
+		 * PlayerChatInput<Boolean> c = ...<br>
+		 * builder.chainAfter(a, {@link EndReason#ON_FINISH})<br>
+		 * .chainAfter(b, {@link EndReason#ON_CANCELL}, {@link EndReason#ON_EXPIRE})<br>
+		 * .chainAfter(c, {@link EndReason#STOP_REPEATING})<br>
+		 * <br>
+		 * 
+		 * Will run a if the input was correct, <br>
+		 * b if the player canceled/leaved or ran out of time<br>
+		 * c if the input was asked only 1 and it was invalid
+		 * 
+		 * @param after
+		 *            What PlayerChatInput to run
+		 * @param toChain
+		 *            When to run it. {@link EndReason#PLAYER_DISCONECTS
+		 *            PLAYER_DISCONECTS} will be ignored
+		 */
+		public PlayerChatInputBuilder<U> chainAfter(@Nonnull PlayerChatInput<?> toChain, @Nonnull EndReason... after) {
+			if (this.chainAfter == null)
+				chainAfter = new EnumMap<>(EndReason.class);
+			for (EndReason cm : after) {
+				if (cm == EndReason.PLAYER_DISCONECTS)
+					continue;
+				this.chainAfter.put(cm, toChain);
+			}
+			return this;
+		}
+
+		/**
+		 * Sets the code to be ejecuted when the time expires
+		 */
+		public PlayerChatInputBuilder<U> onExpire(@Nonnull Consumer<Player> onExpire) {
+			this.onExpire = onExpire;
+			return this;
+		}
+
+		/**
+		 * Message sent when the time expires
+		 */
+		public PlayerChatInputBuilder<U> onExpireMessage(@Nullable String message) {
+			this.whenExpire = message;
+			return this;
+		}
+
+		/**
+		 * Ticks that the player has to answer
+		 * 
+		 * @param ticks
+		 *            The amount of ticks (20 ticks = 1 second)
+		 */
+		public PlayerChatInputBuilder<U> expiresAfter(@Nonnegative int ticks) {
+			if (ticks > 0)
+				this.expiresAfter = ticks;
+			return this;
+		}
+
+		/**
+		 * Code to be runned if the player disconnects
+		 */
+		public PlayerChatInputBuilder<U> onPlayerDiconnect(@Nonnull Runnable onDisconnect) {
+			this.onDisconnect = onDisconnect;
+			return this;
+		}
+
+		/**
+		 * Creates the {@link PlayerChatInput}
+		 * 
+		 * @return A new {@link PlayerChatInput}
+		 */
+		public PlayerChatInput<U> build() {
+			return new PlayerChatInput<U>(main, player, value, invalidInputMessage, sendValueMessage, isValidInput,
+					setValue, onFinish, onCancel, cancel, onInvalidInput, repeat, chainAfter, expiresAfter, onExpire,
+					whenExpire, onDisconnect);
+		}
+	}
+
+	/**
+	 * An enum with all the posible ends to a input-process
+	 * 
+	 * @since 1.2
+	 * @author Nemo_64
+	 */
+	public static enum EndReason {
+
+		/**
+		 * Used when the player sends as input the cancellling string
+		 */
+		PLAYER_CANCELLS,
+		/**
+		 * The input-process ended succesfuly
+		 */
+		FINISH,
+		/**
+		 * The player ran out of time to answer
+		 */
+		RUN_OUT_OF_TIME,
+		/**
+		 * The player disconected
+		 */
+		PLAYER_DISCONECTS,
+		/**
+		 * The player sent an invalid input and the repeating mode is off
+		 */
+		INVALID_INPUT,
+		/**
+		 * A plugin ended the input process
+		 */
+		CUSTOM;
+
+	}
 
 }
