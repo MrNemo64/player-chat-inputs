@@ -52,7 +52,7 @@ import org.bukkit.scheduler.BukkitTask;
  * {@link org.bukkit.conversations.Conversation Conversation} api
  * 
  * @author Nemo_64
- * @version 1.2
+ * @version 1.2.1
  * @param <T>
  *            The input type. Ex: String, Integer, Boolean
  */
