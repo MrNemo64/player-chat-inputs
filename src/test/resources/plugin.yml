@@ -1,0 +1,13 @@
+main: me.nemo_64.playerinputs.Main
+name: PlayerInputs
+version: 1.2
+description: Useful clases to get player inputs in several ways
+api-version: 1.13
+author: Nemo_64
+website: https://github.com/MrNemo64/player-inputs
+commands:
+   test:
+      description: Comand for testing
+      aliases:
+      - t
+      - te
