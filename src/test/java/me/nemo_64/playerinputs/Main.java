@@ -6,9 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.nemo_64.playerinputs.chatinput.PlayerChatInput;
-import me.nemo_64.playerinputs.chatinput.PlayerChatInput.EndReason;
-import me.nemo_64.playerinputs.chatinput.PlayerChatInput.PlayerChatInputBuilder;
+import me.nemo_64.spigotutilities.playerinputs.chatinput.PlayerChatInput;
+import me.nemo_64.spigotutilities.playerinputs.chatinput.PlayerChatInput.EndReason;
+import me.nemo_64.spigotutilities.playerinputs.chatinput.PlayerChatInput.PlayerChatInputBuilder;
 
 public class Main extends JavaPlugin implements CommandExecutor {
 

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package me.nemo_64.playerinputs.chatinput;
+package me.nemo_64.spigotutilities.playerinputs.chatinput;
 
 import java.util.Objects;
 import java.util.UUID;
