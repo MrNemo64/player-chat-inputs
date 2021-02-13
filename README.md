@@ -1,4 +1,4 @@
-Lastest versio: 1.2.1
+Lastest version: 1.2.1
 # player-inputs
 Utilities to get a player input for those who don't want to use the Conversation API
 
